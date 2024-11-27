@@ -24,12 +24,19 @@ export default function Routing({
 
     const routingControl = Leaflet.Routing.control({
       waypoints: _tmp,
+      lineOptions: {
+        styles: [
+          {
+            color: "blue",
+            opacity: 0.6,
+            weight: 4
+          }
+        ]
+      },
       routeWhileDragging: false,
-      autoRoute: true,
-      routeDragInterval: 500,
-      waypointMode: "connect",
-      showAlternatives: false,
-      reverseWaypoints: true,
+      fitSelectedRoutes: false,
+      showAlternatives: false
+      
     }).addTo(map);
 
     return () => {
