@@ -1,4 +1,4 @@
-import { useEffect,useRef ,useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import "leaflet-routing-machine-custom";
 import { useMap } from "react-leaflet";
 import { RouteCoordinate } from "./LeafletType";
@@ -18,11 +18,11 @@ Leaflet.Marker.prototype.options.icon = Leaflet.icon({
 export default function Routing({
   Coordinates,
   setDistance,
-  setTime
+  setTime,
 }: {
   Coordinates: RouteCoordinate[];
-  setDistance:React.Dispatch<React.SetStateAction<string | undefined>>;
-  setTime:React.Dispatch<React.SetStateAction<string | undefined>>;
+  setDistance: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setTime: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   const map = useMap();
   const [routes, setRoutes] = useState<any[]>([]);
@@ -44,27 +44,29 @@ export default function Routing({
   ];
   useEffect(() => {
     if (!map) return;
-    if(Coordinates.length==0){
-      if (map){
-        for (let index = 0; index < routes.length; index++) {
-          map.removeControl(routes[index]);         
+    if (Coordinates.length == 0) {
+      if (map) {
+        try {
+          for (let index = 0; index < routes.length; index++) {
+            console.log(routes, index, routes[index]);
+            map.removeControl(routes[index]);
+          }
+        } catch (e) {
+          console.log(e);
         }
-        setDistance('');
-        setTime('');
-     
-      } 
+      }
     }
-    const tmp_item=routes;
-   Coordinates.map((route, index) => {
+    const tmp_item = routes;
+    Coordinates.map((route, index) => {
       const _tmp = route.Route.map((object) => {
         return Leaflet.latLng(object.lat, object.lng);
       });
-      const item=Leaflet.Routing.control({
+      const item = Leaflet.Routing.control({
         waypoints: _tmp,
         lineOptions: {
           styles: [
             {
-              color: Color[index]?Color[index]:"blue",
+              color: Color[index] ? Color[index] : "blue",
               opacity: 0.6,
               weight: 4,
             },
@@ -73,23 +75,27 @@ export default function Routing({
         routeWhileDragging: false,
         fitSelectedRoutes: false,
         showAlternatives: false,
-      }).addTo(map);
-tmp_item.push(item);
-      setRoutes(tmp_item);
+        // addWaypoints: false,
+      })
 
-      item.on('routesfound', (e:any)=> {
-        // let distance = e.routes[0].summary.totalDistance;
-        setDistance(e.routes[0].summary.totalDistance);
-        setTime(e.routes[0].summary.totalTime);
-        // console.log(distance);
-    })
-    item.on('routeselected', function(e:any) {
-      // var route = e.route;
-      setDistance(e.route.summary.totalDistance);
-      setTime(e.route.summary.totalTime);
-      console.log(e);
-  })
+        .on("routesfound", (e: any) => {
+          // let distance = e.routes[0].summary.totalDistance;
+          setDistance(e.routes[0].summary.totalDistance);
+          setTime(e.routes[0].summary.totalTime);
+          // console.log(distance);
+        })
+        .on("routeselected", function (e: any) {
+          // var route = e.route;
+          setDistance(e.route.summary.totalDistance);
+          setTime(e.route.summary.totalTime);
+          console.log(e);
+        })
+        .addTo(map);
+
+      tmp_item.push(item);
+      setRoutes(tmp_item);
     });
+
     // return () => {
     //   if (map) map.removeControl(routingControl);
     // };

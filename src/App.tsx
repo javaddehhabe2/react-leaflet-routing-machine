@@ -85,6 +85,8 @@ function App() {
   const DeleteRoutes = useCallback(() => {
     setNewRouteState(0);
     setCoordinates([]);
+    setDistance("");
+    setTime("");
   }, [setNewRouteState, setCoordinates]);
   return (
     <MapContainer
