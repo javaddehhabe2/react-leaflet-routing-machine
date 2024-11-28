@@ -18,9 +18,9 @@
   color: #61dafb;
 }
 
-/* .leaflet-routing-container{
+.leaflet-routing-container{
   display: none;
-} */
+}
 
 .leaflet-control{
   border: 2px solid rgba(0, 0, 0, 0.2);

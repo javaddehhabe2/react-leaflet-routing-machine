@@ -2,7 +2,6 @@ import { useEffect,useRef ,useState} from "react";
 import "leaflet-routing-machine-custom";
 import { useMap } from "react-leaflet";
 import { RouteCoordinate } from "./LeafletType";
-import { Route } from "@mui/icons-material";
 const Leaflet = require("leaflet");
 
 Leaflet.Marker.prototype.options.icon = Leaflet.icon({
@@ -18,11 +17,14 @@ Leaflet.Marker.prototype.options.icon = Leaflet.icon({
 
 export default function Routing({
   Coordinates,
+  setDistance,
+  setTime
 }: {
   Coordinates: RouteCoordinate[];
+  setDistance:React.Dispatch<React.SetStateAction<string | undefined>>;
+  setTime:React.Dispatch<React.SetStateAction<string | undefined>>;
 }) {
   const map = useMap();
-  const itemEls = useRef([]) ;
   const [routes, setRoutes] = useState<any[]>([]);
   const Color = [
     "blue",
@@ -47,6 +49,8 @@ export default function Routing({
         for (let index = 0; index < routes.length; index++) {
           map.removeControl(routes[index]);         
         }
+        setDistance('');
+        setTime('');
      
       } 
     }
@@ -72,6 +76,19 @@ export default function Routing({
       }).addTo(map);
 tmp_item.push(item);
       setRoutes(tmp_item);
+
+      item.on('routesfound', (e:any)=> {
+        // let distance = e.routes[0].summary.totalDistance;
+        setDistance(e.routes[0].summary.totalDistance);
+        setTime(e.routes[0].summary.totalTime);
+        // console.log(distance);
+    })
+    item.on('routeselected', function(e:any) {
+      // var route = e.route;
+      setDistance(e.route.summary.totalDistance);
+      setTime(e.route.summary.totalTime);
+      console.log(e);
+  })
     });
     // return () => {
     //   if (map) map.removeControl(routingControl);

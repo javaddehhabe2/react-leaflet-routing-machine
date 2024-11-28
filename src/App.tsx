@@ -9,7 +9,14 @@ import {
   type LeafletMouseEvent,
 } from "leaflet";
 import Routing from "./Routing";
-import { Button, Stack,Divider } from "@mui/material";
+import {
+  Button,
+  Stack,
+  Divider,
+  Card,
+  CardContent,
+  Typography,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
@@ -22,6 +29,9 @@ function App() {
   const position: LatLngExpression = [36.2097222, 58.7988889];
   const [coordinates, setCoordinates] = useState<RouteCoordinate[]>([]);
   const [newRouteState, setNewRouteState] = useState<number>(0);
+
+  const [distance, setDistance] = useState<string>();
+  const [time, setTime] = useState<string>();
 
   const ondblclickMarker = useCallback(
     (e: LeafletMouseEvent) => {
@@ -46,7 +56,7 @@ function App() {
       const lat = e.latlng.lat;
       const lng = e.latlng.lng;
 
-      console.log(coordinates[newRouteState],coordinates,newRouteState);
+      console.log(coordinates[newRouteState], coordinates, newRouteState);
       if (!coordinates[newRouteState])
         coordinates[newRouteState] = { Route: [] };
       let existCoor = coordinates[newRouteState].Route.find(
@@ -74,7 +84,7 @@ function App() {
 
   const DeleteRoutes = useCallback(() => {
     setNewRouteState(0);
-    setCoordinates([])
+    setCoordinates([]);
   }, [setNewRouteState, setCoordinates]);
   return (
     <MapContainer
@@ -87,7 +97,7 @@ function App() {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Routing Coordinates={coordinates} />
+      <Routing Coordinates={coordinates} setDistance={setDistance} setTime={setTime} />
       <Marker
         position={[36.2097222, 58.7988889]}
         eventHandlers={{
@@ -144,8 +154,12 @@ function App() {
           dblclick: (e) => ondblclickMarker(e),
         }}
       />
-      <Control position="bottomleft" prepend  >
-        <Stack direction="column" spacing={2}  divider={<Divider orientation="vertical" flexItem />}>
+      <Control position="bottomleft" prepend>
+        <Stack
+          direction="column"
+          spacing={2}
+          divider={<Divider orientation="vertical" flexItem />}
+        >
           <Button color="inherit" onClick={NewRoute}>
             <AddIcon />
           </Button>
@@ -154,6 +168,24 @@ function App() {
           </Button>
         </Stack>
       </Control>
+      {distance ? (
+        <Control position="topright">
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              <Typography variant="h5" component="div">
+                total Distance
+              </Typography>
+              <Typography variant="body2">{distance}</Typography>
+              {time?<>
+                <Typography variant="h5" component="div">
+                total Time
+              </Typography>
+              <Typography variant="body2">{time}</Typography>
+              </>:null}
+            </CardContent>
+          </Card>
+        </Control>
+      ) : null}
     </MapContainer>
   );
 }
