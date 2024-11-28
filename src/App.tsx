@@ -87,7 +87,7 @@ function App() {
     setCoordinates([]);
     setDistance("");
     setTime("");
-  }, [setNewRouteState, setCoordinates]);
+  }, [setNewRouteState,setDistance,setTime, setCoordinates]);
   return (
     <MapContainer
       doubleClickZoom={false}
