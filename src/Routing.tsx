@@ -48,7 +48,7 @@ export default function Routing({
       if (map) {
         try {
           for (let index = 0; index < routes.length; index++) {
-            console.log(routes, index, routes[index]);
+            // console.log(routes, index, routes[index]);
             map.removeControl(routes[index]);
           }
         } catch (e) {
@@ -58,37 +58,40 @@ export default function Routing({
     }
     const tmp_item = routes;
     Coordinates.map((route, index) => {
-      const _tmp = route.Route.map((object) => {
-        return Leaflet.latLng(object.lat, object.lng);
-      });
+      const _tmp = route.Route.map(object =>  Leaflet.latLng(object.lat, object.lng));
       const item = Leaflet.Routing.control({
         waypoints: _tmp,
         lineOptions: {
           styles: [
             {
               color: Color[index] ? Color[index] : "blue",
-              opacity: 0.6,
-              weight: 4,
+              opacity: 1,
+              weight: 10,
             },
           ],
         },
-        routeWhileDragging: false,
+        routeWhileDragging: true,
         fitSelectedRoutes: false,
         showAlternatives: false,
-        // addWaypoints: false,
+        addWaypoints: false, // add marker when route dblClicked
+        draggableWaypoints : false,//to set draggable option to false
       })
-
-        .on("routesfound", (e: any) => {
-          // let distance = e.routes[0].summary.totalDistance;
-          setDistance(e.routes[0].summary.totalDistance);
-          setTime(e.routes[0].summary.totalTime);
-          // console.log(distance);
+ .on("click", function (e: any) {
+          // var route = e.route;
+        
+          console.log('click');
         })
+        // .on("routesfound", (e: any) => {
+        //   // let distance = e.routes[0].summary.totalDistance;
+        //   setDistance(e.routes[0].summary.totalDistance);
+        //   setTime(e.routes[0].summary.totalTime);
+        //   // console.log(distance);
+        // })
         .on("routeselected", function (e: any) {
           // var route = e.route;
           setDistance(e.route.summary.totalDistance);
           setTime(e.route.summary.totalTime);
-          console.log(e);
+          console.log("routeselected");
         })
         .addTo(map);
 
@@ -99,7 +102,7 @@ export default function Routing({
     // return () => {
     //   if (map) map.removeControl(routingControl);
     // };
-    console.log(Coordinates);
+
   }, [Coordinates]);
 
   return null;

@@ -25,6 +25,19 @@ import {
 
 import { RouteCoordinate } from "./LeafletType";
 
+const MARKERS = [
+  { lat: 36.2397122, lng: 58.7588849 },
+  { lat: 36.2097222, lng: 58.7988889 },
+  { lat: 36.2400211, lng: 58.83888879 },
+  { lat: 36.2297022, lng: 58.74888 },
+  { lat: 36.2197112, lng: 58.85388789 },
+  { lat: 36.2197112, lng: 58.85388789 },
+  { lat: 36.2, lng: 58.7188389 },
+  { lat: 36.1996222, lng: 58.8288901 },
+];
+// <Popup>
+//                     <button onClick={() => removeMarker(pos)}>Remove marker</button>
+//                   </Popup>
 function App() {
   const position: LatLngExpression = [36.2097222, 58.7988889];
   const [coordinates, setCoordinates] = useState<RouteCoordinate[]>([]);
@@ -33,30 +46,36 @@ function App() {
   const [distance, setDistance] = useState<string>();
   const [time, setTime] = useState<string>();
 
+  const ondblclickMarker1 = useCallback(() => {
+    console.log("ondblclickMarker1");
+  }, []);
   const ondblclickMarker = useCallback(
     (e: LeafletMouseEvent) => {
-      console.log(e);
-      const lat = e.latlng.lat;
-      const lng = e.latlng.lng;
-      const _tmp = coordinates[newRouteState].Route.map((object) => ({
-        ...object,
-      }));
+      console.log("ondblclickMarker");
+      // const lat = e.latlng.lat;
+      // const lng = e.latlng.lng;
+      // const _tmp = coordinates[newRouteState].Route.map((object) => ({
+      //   ...object,
+      // }));
 
-      let result = _tmp.filter((el) => el.lat !== lat && el.lng !== lng);
-      let tmp = coordinates;
+      // let result = _tmp.filter((el) => el.lat !== lat && el.lng !== lng);
+      // let tmp = coordinates;
 
-      tmp[newRouteState].Route = result;
-      setCoordinates(tmp);
+      // tmp[newRouteState].Route = result;
+      // setCoordinates(tmp);
     },
     [coordinates, newRouteState, setCoordinates]
   );
 
   const onClickMarker = useCallback(
     (e: LeafletMouseEvent) => {
+
+
+      
       const lat = e.latlng.lat;
       const lng = e.latlng.lng;
 
-      console.log(coordinates[newRouteState], coordinates, newRouteState);
+      console.log("onClickMarker",e);
       if (!coordinates[newRouteState])
         coordinates[newRouteState] = { Route: [] };
       let existCoor = coordinates[newRouteState].Route.find(
@@ -87,7 +106,7 @@ function App() {
     setCoordinates([]);
     setDistance("");
     setTime("");
-  }, [setNewRouteState,setDistance,setTime, setCoordinates]);
+  }, [setNewRouteState, setDistance, setTime, setCoordinates]);
   return (
     <MapContainer
       doubleClickZoom={false}
@@ -99,63 +118,25 @@ function App() {
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Routing Coordinates={coordinates} setDistance={setDistance} setTime={setTime} />
-      <Marker
-        position={[36.2097222, 58.7988889]}
-        eventHandlers={{
-          click: (e) => onClickMarker(e),
-          dblclick: (e) => ondblclickMarker(e),
-        }}
+      <Routing
+        Coordinates={coordinates}
+        setDistance={setDistance}
+        setTime={setTime}
       />
-      <Marker
-        position={[36.2400211, 58.83888879]}
-        eventHandlers={{
-          click: (e) => onClickMarker(e),
-          dblclick: (e) => ondblclickMarker(e),
-        }}
-      />
-      <Marker
-        position={[36.2397122, 58.7588849]}
-        eventHandlers={{
-          click: (e) => onClickMarker(e),
-          dblclick: (e) => ondblclickMarker(e),
-        }}
-      />
-      <Marker
-        position={[36.2297022, 58.74888]}
-        eventHandlers={{
-          click: (e) => onClickMarker(e),
-          dblclick: (e) => ondblclickMarker(e),
-        }}
-      />
-      <Marker
-        position={[36.2197112, 58.85388789]}
-        eventHandlers={{
-          click: (e) => onClickMarker(e),
-          dblclick: (e) => ondblclickMarker(e),
-        }}
-      />
-      <Marker
-        position={[36.2496922, 58.7288589]}
-        eventHandlers={{
-          click: (e) => onClickMarker(e),
-          dblclick: (e) => ondblclickMarker(e),
-        }}
-      />
-      <Marker
-        position={[36.2, 58.7188389]}
-        eventHandlers={{
-          click: (e) => onClickMarker(e),
-          dblclick: (e) => ondblclickMarker(e),
-        }}
-      />
-      <Marker
-        position={[36.1996222, 58.8288901]}
-        eventHandlers={{
-          click: (e) => onClickMarker(e),
-          dblclick: (e) => ondblclickMarker(e),
-        }}
-      />
+      {MARKERS.map((_marker,index) => (
+        <Marker
+        key={index}
+          position={[_marker.lat, _marker.lng]}
+          draggable={false}
+          bubblingMouseEvents={false}
+          eventHandlers={{
+            // click: (e) => onClickMarker(e),
+            // mousedown:() => ondblclickMarker1(),
+            // dblclick: (e) => ondblclickMarker(e),
+            click: (e) => onClickMarker(e),
+          }}
+        />
+      ))}
       <Control position="bottomleft" prepend>
         <Stack
           direction="column"
@@ -170,24 +151,31 @@ function App() {
           </Button>
         </Stack>
       </Control>
-      {distance ? (
-        <Control position="topright">
+
+      <Control position="topright">
+        {distance || time ? (
           <Card sx={{ minWidth: 275 }}>
             <CardContent>
-              <Typography variant="h5" component="div">
-                total Distance
-              </Typography>
-              <Typography variant="body2">{distance}</Typography>
-              {time?<>
-                <Typography variant="h5" component="div">
-                total Time
-              </Typography>
-              <Typography variant="body2">{time}</Typography>
-              </>:null}
+              {distance ? (
+                <>
+                  <Typography variant="h5" component="div">
+                    total Distance
+                  </Typography>
+                  <Typography variant="body2">{distance}</Typography>
+                </>
+              ) : null}
+              {time ? (
+                <>
+                  <Typography variant="h5" component="div">
+                    total Time
+                  </Typography>
+                  <Typography variant="body2">{time}</Typography>
+                </>
+              ) : null}
             </CardContent>
           </Card>
-        </Control>
-      ) : null}
+        ) : null}
+      </Control>
     </MapContainer>
   );
 }
