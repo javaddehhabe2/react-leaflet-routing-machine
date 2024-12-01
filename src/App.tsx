@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import "./App.css";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Control from "react-leaflet-custom-control";
@@ -17,43 +17,21 @@ import {
   CardContent,
   Typography,
 } from "@mui/material";
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Search as SearchIcon,
-} from "@mui/icons-material";
+import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
 
 import { RouteCoordinate, RouteDeteilType } from "./LeafletType";
-
-const MARKERS = [
-  { lat: 36.2087222, lng: 58.7908889 },
-  { lat: 36.2097222, lng: 58.7988889 },
-  { lat: 36.2017222, lng: 58.7958889 },
-  { lat: 36.2057222, lng: 58.7888889 },
-  { lat: 36.2117112, lng: 58.7808889 },
-  { lat: 36.2127112, lng: 58.80388789 },
-  { lat: 36.2100012, lng: 58.7788889 },
-  { lat: 36.1996222, lng: 58.8188901 },
-];
-var dblClickCheck = false;
+import { MARKERS } from "./MapData";
 
 function App() {
   const position: LatLngExpression = [36.2097222, 58.7988889];
   const [coordinates, setCoordinates] = useState<RouteCoordinate[]>([]);
   const [newRouteState, setNewRouteState] = useState<number>(0);
-
   const [removedMarker, setRemovedMarker] = useState<number>();
-
   const [routeDetail, setRouteDetail] = useState<RouteDeteilType[]>();
-
   const [selectedRouteDetail, setSelectedRouteDetail] = useState<number>();
-
-  // const timeout = useRef<NodeJS.Timeout>();
 
   const ondblclickMarker = useCallback(
     (lat: number, lng: number) => {
-      console.log("ondblclickMarker");
-
       const _tmp = [...coordinates];
       const result = _tmp.map((object, index) => {
         let _route = object.Route.filter(
@@ -66,7 +44,6 @@ function App() {
       });
 
       setCoordinates(result);
-      // }
     },
     [coordinates, newRouteState, setCoordinates, setRemovedMarker]
   );

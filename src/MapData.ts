@@ -1,0 +1,26 @@
+export const Color = [
+  "blue",
+  "aqua",
+  "fuchsia",
+  "green",
+  "lime",
+  "maroon",
+  "navy",
+  "olive",
+  "orange",
+  "purple",
+  "red",
+  "silver",
+  "teal",
+  "yellow",
+];
+export const MARKERS = [
+  { lat: 36.2087222, lng: 58.7908889 },
+  { lat: 36.2097222, lng: 58.7988889 },
+  { lat: 36.2017222, lng: 58.7958889 },
+  { lat: 36.2057222, lng: 58.7888889 },
+  { lat: 36.2117112, lng: 58.7808889 },
+  { lat: 36.2127112, lng: 58.80388789 },
+  { lat: 36.2100012, lng: 58.7788889 },
+  { lat: 36.1996222, lng: 58.8188901 },
+];
