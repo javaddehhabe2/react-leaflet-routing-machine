@@ -71,7 +71,7 @@ export default function Routing({
     console.log('removedMarker');
     console.log(removedMarker);
     if(removedMarker!==undefined){
-      console.log(map,routes[removedMarker]);
+      console.log(map,routes,removedMarker);
 
       for (let index = 0; index < routes.length; index++) {
         // console.log(routes, index, routes[index]);
