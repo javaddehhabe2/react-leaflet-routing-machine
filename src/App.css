@@ -21,10 +21,19 @@
 .leaflet-routing-container{
   display: none;
 }
-
 .leaflet-control{
   border: 2px solid rgba(0, 0, 0, 0.2);
   background-color: white;
+}
+.badge {
+ 
+  border-radius: 3rem; 
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin: .5rem;
+  top: 20%;
+  left: 30%;
 }
 @keyframes App-logo-spin {
   from {

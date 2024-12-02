@@ -1,41 +1,73 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
 import {
   type LatLngExpression,
-  type LatLngLiteral,
   type LeafletMouseEvent,
+  DivIcon,
 } from "leaflet";
 import Routing from "./Routing";
-import {
-  Button,
-  Stack,
-  Divider,
-  Card,
-  CardContent,
-  Typography,
-} from "@mui/material";
+import { Button, Stack, Divider } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { HiOutlineLocationMarker, HiLocationMarker } from "react-icons/hi";
+import { RouteCoordinate, RouteDetailType, IconType,Markers } from "./LeafletType";
+import { MarkersDetail } from "./MapData";
+import { renderToStaticMarkup } from "react-dom/server";
 
-import { RouteCoordinate, RouteDeteilType } from "./LeafletType";
-import { MARKERS } from "./MapData";
+import RouteDetails from "./RouteDetails/RouteDetails";
 
 function App() {
-  const position: LatLngExpression = [36.2097222, 58.7988889];
+  const position: LatLngExpression = [
+    MarkersDetail[0].Latitude,
+    MarkersDetail[0].Longitude,
+  ];
   const [coordinates, setCoordinates] = useState<RouteCoordinate[]>([]);
-  const [newRouteState, setNewRouteState] = useState<number>(0);
+  const [currentRouteIndex, setCurrentRouteIndex] = useState<number>(0);
   const [removedMarker, setRemovedMarker] = useState<number>();
-  const [routeDetail, setRouteDetail] = useState<RouteDeteilType[]>();
-  const [selectedRouteDetail, setSelectedRouteDetail] = useState<number>();
+  const [routeDetail, setRouteDetail] = useState<RouteDetailType[]>([]);
+
+  // const [selectedRouteDetail, setSelectedRouteDetail] = useState<number>();
+
+  const Icon = useCallback(
+    ({ on, text, color }: IconType) =>
+      new DivIcon({
+        html: renderToStaticMarkup(
+          <div className="absolute w-[50%] h-[50%] left-[50%] translate-x-[-50%]">
+            {on ? (
+              <HiLocationMarker
+                className={`w-full h-full`}
+                style={{ color: color }}
+              />
+            ) : (
+              <HiOutlineLocationMarker
+                className={`w-full h-full`}
+                style={{ color: color }}
+              />
+            )}{" "}
+            {text ? (
+              <span
+                className="absolute w-[50%] h-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] badge"
+                style={{ color: "white", backgroundColor: color }}
+              >
+                {text}
+              </span>
+            ) : null}
+          </div>
+        ),
+        iconSize: [100, 100], // size of the icon
+        className: "",
+      }),
+    []
+  );
 
   const ondblclickMarker = useCallback(
     (lat: number, lng: number) => {
       const _tmp = [...coordinates];
       const result = _tmp.map((object, index) => {
         let _route = object.Route.filter(
-          (el) => el.lat !== lat && el.lng !== lng
+          (el) => el.Latitude !== lat && el.Longitude !== lng
         );
         if (_route.length < coordinates[index].Route.length)
           setRemovedMarker(index);
@@ -45,53 +77,51 @@ function App() {
 
       setCoordinates(result);
     },
-    [coordinates, newRouteState, setCoordinates, setRemovedMarker]
+    [coordinates, currentRouteIndex, setCoordinates, setRemovedMarker]
   );
 
   const onClickMarker = useCallback(
     (e: LeafletMouseEvent) => {
-      if (!coordinates[newRouteState])
-        coordinates[newRouteState] = { Route: [] };
+      if (!coordinates[currentRouteIndex])
+        coordinates[currentRouteIndex] = { Route: [] };
       const lat = e.latlng.lat,
         lng = e.latlng.lng;
-      let existCoor = coordinates[newRouteState].Route.find(
-        (el) => el.lat === lat && el.lng === lng
+      let existCoor = coordinates[currentRouteIndex].Route.find(
+        (el) => el.Latitude === lat && el.Longitude === lng
       );
       if (!existCoor) {
-        const markerlatlng: LatLngLiteral = { lat, lng };
-        const nextRoute = coordinates.map((_route, index) => {
-          if (index == newRouteState) {
-            const tmp = { ..._route };
-            tmp.Route.push(markerlatlng);
-            return tmp;
-          } else return _route;
-        });
+        let _Marker = MarkersDetail.find(
+          (el) => el.Latitude === lat && el.Longitude === lng
+        );
+        if (_Marker) {
+          const _m: Markers = _Marker;
+          const nextRoute = coordinates.map((_route, index) => {
+            if (index === currentRouteIndex) {
+              const tmp = { ..._route };
+              tmp.Route.push(_m);
+              return tmp;
+            } else return _route;
+          });
 
-        setCoordinates(nextRoute);
+          setCoordinates(nextRoute);
+        }
       }
     },
-    [coordinates, newRouteState, setCoordinates]
+    [coordinates, currentRouteIndex, setCoordinates]
   );
 
   const NewRoute = useCallback(() => {
-    setNewRouteState(coordinates.length);
-  }, [coordinates, setNewRouteState]);
+    setCurrentRouteIndex(coordinates.length);
+  }, [coordinates, setCurrentRouteIndex]);
 
   const DeleteRoutes = useCallback(() => {
-    setNewRouteState(0);
+    setCurrentRouteIndex(0);
     setCoordinates([]);
-    setRouteDetail([]);
-    setSelectedRouteDetail(undefined);
-  }, [
-    setNewRouteState,
-    setRouteDetail,
-    setSelectedRouteDetail,
-    setCoordinates,
-  ]);
+  }, [setCurrentRouteIndex, setCoordinates]);
 
   const UpdateRouteDetail = useCallback(
     (index: number, Distance: string, Time: string) => {
-      const _routeDetail: RouteDeteilType[] = routeDetail
+      const _routeDetail: RouteDetailType[] = routeDetail
         ? [...routeDetail]
         : [];
       let _exist = _routeDetail.findIndex((el) => el.index === index);
@@ -108,12 +138,15 @@ function App() {
     },
     [routeDetail, setRouteDetail]
   );
+useEffect(()=>{
 
+  console.log(currentRouteIndex);
+},[currentRouteIndex])
   return (
     <MapContainer
       doubleClickZoom={false}
       center={position}
-      zoom={14}
+      zoom={12}
       style={{ height: "100vh" }}
     >
       <TileLayer
@@ -123,22 +156,25 @@ function App() {
       <Routing
         Coordinates={coordinates}
         UpdateRouteDetail={UpdateRouteDetail}
-        setSelectedRouteDetail={setSelectedRouteDetail}
+        setCurrentRouteIndex={setCurrentRouteIndex}
         ondblclickMarker={ondblclickMarker}
         removedMarker={removedMarker}
         setRemovedMarker={setRemovedMarker}
+        Icon={Icon}
       />
-      {MARKERS.map((_marker, index) => (
+      {MarkersDetail.map((_marker, index) => (
         <Marker
           key={index}
-          position={[_marker.lat, _marker.lng]}
+          position={[_marker.Latitude, _marker.Longitude]}
           draggable={false}
           bubblingMouseEvents={false}
           eventHandlers={{
             click: (e) => onClickMarker(e),
           }}
+          icon={Icon({ on: false, text: "", color: "blue" })}
         />
       ))}
+
       <Control position="bottomleft" prepend>
         <Stack
           direction="column"
@@ -155,33 +191,11 @@ function App() {
       </Control>
 
       <Control position="topright">
-        {selectedRouteDetail !== undefined &&
-        routeDetail &&
-        routeDetail[selectedRouteDetail] ? (
-          <Card sx={{ minWidth: 275 }}>
-            <CardContent>
-              {routeDetail[selectedRouteDetail]?.Distance ? (
-                <>
-                  <Typography variant="h5" component="div">
-                    total Distance
-                  </Typography>
-                  <Typography variant="body2">
-                    {routeDetail[selectedRouteDetail]?.Distance}
-                  </Typography>
-                </>
-              ) : null}
-              {routeDetail[selectedRouteDetail]?.Time ? (
-                <>
-                  <Typography variant="h5" component="div">
-                    total Time
-                  </Typography>
-                  <Typography variant="body2">
-                    {routeDetail[selectedRouteDetail]?.Time}
-                  </Typography>
-                </>
-              ) : null}
-            </CardContent>
-          </Card>
+        {coordinates && coordinates[currentRouteIndex] ? (
+          <RouteDetails
+            Points={coordinates[currentRouteIndex]}
+            Detail={routeDetail[currentRouteIndex]}
+          />
         ) : null}
       </Control>
     </MapContainer>

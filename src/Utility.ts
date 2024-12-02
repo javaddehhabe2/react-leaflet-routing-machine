@@ -1,6 +1,6 @@
 import { Markers } from "./LeafletType";
 export const Color = [
-"red",
+  "blue",
   "aqua",
   "fuchsia",
   "green",
@@ -10,6 +10,7 @@ export const Color = [
   "olive",
   "orange",
   "purple",
+  "red",
   "silver",
   "teal",
   "yellow",

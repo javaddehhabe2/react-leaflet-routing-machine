@@ -3,26 +3,17 @@ import "leaflet-routing-machine-custom";
 import { useMap } from "react-leaflet";
 import { RoutingType } from "./LeafletType";
 import { Color } from "./MapData";
-const Leaflet = require("leaflet");
 
-Leaflet.Marker.prototype.options.icon = Leaflet.icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png",
-  iconSize: [25, 41],
-  shadowSize: [41, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-});
+const Leaflet = require("leaflet");
 
 export default function Routing({
   Coordinates,
   UpdateRouteDetail,
-  setSelectedRouteDetail,
+  setCurrentRouteIndex,
   ondblclickMarker,
   removedMarker,
   setRemovedMarker,
+  Icon,
 }: RoutingType) {
   const map = useMap();
   const [routes, setRoutes] = useState<any[]>([]);
@@ -42,7 +33,7 @@ export default function Routing({
   useEffect(() => {
     if (!map) return;
 
-    if (Coordinates.length == 0) ClearAll();
+    if (Coordinates.length === 0) ClearAll();
 
     if (removedMarker !== undefined) {
       ClearAll();
@@ -50,8 +41,9 @@ export default function Routing({
     }
     const tmp_item = [...routes];
     Coordinates.map((route, index) => {
+      const _routeColor = Color[index] ? Color[index] : "blue";
       const _tmp = route.Route.map((object) =>
-        Leaflet.latLng(object.lat, object.lng)
+        Leaflet.latLng(object.Latitude, object.Longitude)
       );
       const item = Leaflet.Routing.control({
         waypoints: _tmp,
@@ -68,9 +60,10 @@ export default function Routing({
             useZoomParameter: false,
             draggableWaypoints: false,
             addWaypoints: false,
+
             styles: [
               {
-                color: Color[index] ? Color[index] : "blue",
+                color: _routeColor,
                 opacity: 1,
                 weight: 10,
               },
@@ -78,6 +71,7 @@ export default function Routing({
           });
           line.eachLayer(function (l: any) {
             l.on("click", function (e: any) {
+              console.log("line clicked");
               RouteClicked(index);
             });
           });
@@ -86,16 +80,18 @@ export default function Routing({
         createMarker: function (i: any, wp: any, nWps: any) {
           return Leaflet.marker(wp.latLng, {
             keyboard: true,
+            icon: Icon({ on: true, text: i + 1, color: _routeColor }),
           })
-            .on("click", function (e: any) {
-              console.log("there be dragons start!!", e);
-            })
+            // .on("click", function (e: any) {
+            //   console.log("there be dragons start!!", e);
+            // })
             .on("dblclick", function (e: any) {
               ondblclickMarker(e.latlng.lat, e.latlng.lng);
             });
         },
       })
         .on("routeselected", function (e: any) {
+          console.log(e);
           UpdateRouteDetail(
             index,
             e.route.summary.totalDistance,
@@ -112,8 +108,8 @@ export default function Routing({
   }, [Coordinates]);
 
   const RouteClicked = useCallback(
-    (index: number) => setSelectedRouteDetail(index),
-    [setSelectedRouteDetail]
+    (index: number) => setCurrentRouteIndex(index),
+    [setCurrentRouteIndex]
   );
   return null;
 }
