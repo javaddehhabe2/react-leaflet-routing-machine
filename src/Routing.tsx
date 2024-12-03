@@ -65,7 +65,7 @@ export default function Routing({
               {
                 color: _routeColor,
                 opacity: 1,
-                weight: 10,
+                weight: 6,
               },
             ],
           });
@@ -80,7 +80,7 @@ export default function Routing({
         createMarker: function (i: any, wp: any, nWps: any) {
           return Leaflet.marker(wp.latLng, {
             keyboard: true,
-            icon: Icon({ on: true, text: i + 1, color: _routeColor }),
+            icon: Icon({  text: i + 1, color: _routeColor }),
           })
             // .on("click", function (e: any) {
             //   console.log("there be dragons start!!", e);

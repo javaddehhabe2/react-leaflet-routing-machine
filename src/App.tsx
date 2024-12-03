@@ -11,12 +11,31 @@ import {
 import Routing from "./Routing";
 import { Button, Stack, Divider } from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import { HiOutlineLocationMarker, HiLocationMarker } from "react-icons/hi";
-import { RouteCoordinate, RouteDetailType, IconType,Markers } from "./LeafletType";
-import { MarkersDetail } from "./MapData";
+
+
+import {
+  RouteCoordinate,
+  RouteDetailType,
+  IconType,
+  Markers,
+} from "./LeafletType";
+import { MarkersDetail, MARKERS } from "./MapData";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import RouteDetails from "./RouteDetails/RouteDetails";
+
+import { createTheme, ThemeProvider } from "@mui/material";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "IranYekan",
+    body2: {
+      fontSize: "1rem",
+      fontWeight: "bolder",
+      color: "#374151",
+    },
+  },
+});
 
 function App() {
   const position: LatLngExpression = [
@@ -28,38 +47,35 @@ function App() {
   const [removedMarker, setRemovedMarker] = useState<number>();
   const [routeDetail, setRouteDetail] = useState<RouteDetailType[]>([]);
 
-  // const [selectedRouteDetail, setSelectedRouteDetail] = useState<number>();
+  const MarkerType= useCallback((Marker:Markers|undefined)=>{
 
+  return 'fi-ts-marker-time';
+  
+  },[]);
   const Icon = useCallback(
-    ({ on, text, color }: IconType) =>
+    ({ Marker , text, color }: IconType) =>
       new DivIcon({
         html: renderToStaticMarkup(
-          <div className="absolute w-[50%] h-[50%] left-[50%] translate-x-[-50%]">
-            {on ? (
-              <HiLocationMarker
-                className={`w-full h-full`}
-                style={{ color: color }}
-              />
-            ) : (
-              <HiOutlineLocationMarker
-                className={`w-full h-full`}
-                style={{ color: color }}
-              />
-            )}{" "}
-            {text ? (
+          <div className="absolute left-0 -top-6">
+            { 
+              <i
+                className={`fi ${MarkerType(Marker)}`} style={{ fontSize:'1.75rem', color: color }}
+              ></i>
+            }
+            {/* {text ? (
               <span
                 className="absolute w-[50%] h-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] badge"
                 style={{ color: "white", backgroundColor: color }}
               >
                 {text}
               </span>
-            ) : null}
+            ) : null} */}
           </div>
         ),
-        iconSize: [100, 100], // size of the icon
+        iconSize: [10, 10], // size of the icon
         className: "",
       }),
-    []
+    [MarkerType]
   );
 
   const ondblclickMarker = useCallback(
@@ -138,67 +154,73 @@ function App() {
     },
     [routeDetail, setRouteDetail]
   );
-useEffect(()=>{
 
-  console.log(currentRouteIndex);
-},[currentRouteIndex])
   return (
-    <MapContainer
-      doubleClickZoom={false}
-      center={position}
-      zoom={12}
-      style={{ height: "100vh" }}
-    >
-      <TileLayer
-        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <Routing
-        Coordinates={coordinates}
-        UpdateRouteDetail={UpdateRouteDetail}
-        setCurrentRouteIndex={setCurrentRouteIndex}
-        ondblclickMarker={ondblclickMarker}
-        removedMarker={removedMarker}
-        setRemovedMarker={setRemovedMarker}
-        Icon={Icon}
-      />
-      {MarkersDetail.map((_marker, index) => (
-        <Marker
-          key={index}
-          position={[_marker.Latitude, _marker.Longitude]}
-          draggable={false}
-          bubblingMouseEvents={false}
-          eventHandlers={{
-            click: (e) => onClickMarker(e),
-          }}
-          icon={Icon({ on: false, text: "", color: "blue" })}
+    <ThemeProvider theme={theme}>
+      <MapContainer
+        doubleClickZoom={false}
+        center={position}
+        zoom={11}
+        style={{ height: "100vh" }}
+        zoomControl={false}
+      >
+        <TileLayer
+          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-      ))}
+        <Routing
+          Coordinates={coordinates}
+          UpdateRouteDetail={UpdateRouteDetail}
+          setCurrentRouteIndex={setCurrentRouteIndex}
+          ondblclickMarker={ondblclickMarker}
+          removedMarker={removedMarker}
+          setRemovedMarker={setRemovedMarker}
+          Icon={Icon}
+        />
+        {MarkersDetail.map((_marker, index) => (
+          <Marker
+            key={index}
+            position={[_marker.Latitude, _marker.Longitude]}
+            draggable={false}
+            bubblingMouseEvents={false}
+            eventHandlers={{
+              click: (e) => onClickMarker(e),
+            }}
+            icon={Icon({Marker:_marker, text: "", color: "blue" })}
+          />
+        ))}
 
-      <Control position="bottomleft" prepend>
-        <Stack
-          direction="column"
-          spacing={2}
-          divider={<Divider orientation="vertical" flexItem />}
-        >
-          <Button color="inherit" onClick={NewRoute}>
-            <AddIcon />
-          </Button>
-          <Button color="inherit" onClick={DeleteRoutes}>
-            <DeleteIcon />
-          </Button>
-        </Stack>
-      </Control>
+        <Control position="bottomleft" prepend>
+          <Stack
+            direction="column"
+            spacing={2}
+            divider={<Divider orientation="vertical" flexItem />}
+          >
+            <Button color="inherit" onClick={NewRoute}>
+              <AddIcon />
+            </Button>
+            <Button color="inherit" onClick={DeleteRoutes}>
+              <DeleteIcon />
+            </Button>
+          </Stack>
+        </Control>
 
-      <Control position="topright">
-        {coordinates && coordinates[currentRouteIndex] ? (
+        <Control position="topright">
+          {coordinates && coordinates[currentRouteIndex] ? (
+            <RouteDetails
+              Points={coordinates[currentRouteIndex]}
+              Detail={routeDetail[currentRouteIndex]}
+            />
+          ) : null}
+        </Control>
+        <Control position="topright">
           <RouteDetails
-            Points={coordinates[currentRouteIndex]}
+            Points={MARKERS}
             Detail={routeDetail[currentRouteIndex]}
           />
-        ) : null}
-      </Control>
-    </MapContainer>
+        </Control>
+      </MapContainer>
+    </ThemeProvider>
   );
 }
 

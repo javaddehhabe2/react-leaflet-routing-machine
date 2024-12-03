@@ -1,37 +1,42 @@
 import * as React from "react";
-import { Typography } from "@mui/material";
-import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
-import TimelineSeparator from "@mui/lab/TimelineSeparator";
-import TimelineConnector from "@mui/lab/TimelineConnector";
-import TimelineContent from "@mui/lab/TimelineContent";
-import TimelineDot from "@mui/lab/TimelineDot";
-
-import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown';
-
+import { IoMdArrowRoundDown } from "react-icons/io";
+import { HiOutlineLocationMarker } from "react-icons/hi";
 import { CustomizedTimeLineType } from "./Type/CustomizedTimeLineType";
 
 export default function CustomizedTimeline({ Points }: CustomizedTimeLineType) {
   return (
-    <Timeline position="left">
+    <ol className="relative border-s border-dashed border-gray-400 my-4 mr-3">
       {Points.Route.map((point, index) => (
-        <TimelineItem key={index}>
-          <TimelineSeparator>
-            <TimelineConnector />
-            <TimelineDot color="primary">
-              <KeyboardDoubleArrowDownIcon />
-            </TimelineDot>
-            <TimelineConnector />
-          </TimelineSeparator>
-          <TimelineContent sx={{ py: "12px", px: 2 }}>
-            <Typography variant="h6" component="span">
-              {point.CustomerFullName}
-            </Typography>
-            <Typography component="span">{point.CustomerCode}</Typography>
-            <Typography> {point.CustomerAddress}</Typography>
-          </TimelineContent>
-        </TimelineItem>
+        <li className="mb-10 ms-6">
+          <span className="absolute flex items-center justify-center w-6 h-6 bg-White rounded-sm -start-3 bg-white border-gray-400 border ">
+            <IoMdArrowRoundDown className="text-gray-400" />
+          </span>
+          <div className="flex w-full items-center mb-1">
+            <div className="flex  flex-1 ">
+              <span className="bg-blue-100 text-blue-400 text-xs font-medium  py-1 px-2 rounded  ">
+                {point.CustomerName.slice(0, 10) +
+                  (point.CustomerName.length > 10 ? "..." : "")}
+              </span>
+            </div>
+            <div className="flex  flex-1 ">
+              <div className="flex w-full justify-around">
+                <span className="text-gray-700 text-xxs font-bold">0 KM</span>
+                <div className="w-[1px] bg-gray-300 mx-1"></div>
+                <span className="text-gray-700 text-xxs font-bold">
+                  00:00:00
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <p className="flex items-center mb-4 text-xs font-normal text-gray-500 ">
+            
+              <span className="w-full" style={{display:'ruby'}}><HiOutlineLocationMarker />
+               {point.CustomerAddress}
+               </span>
+          </p>
+        </li>
       ))}
-    </Timeline>
+    </ol>
   );
 }

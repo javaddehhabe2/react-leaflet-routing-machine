@@ -17,86 +17,35 @@ export interface RoutingType {
   ondblclickMarker: (lat: number, lng: number) => void;
   removedMarker: number | undefined;
   setRemovedMarker: React.Dispatch<React.SetStateAction<number | undefined>>;
-  Icon: ({ on, text, color }: IconType) => DivIcon;
+  Icon: ({ Marker, text, color }: IconType) => DivIcon;
 }
 
 export interface IconType {
-  on?: boolean;
+  Marker?:Markers;
   text?: string;
   color?: string;
 }
 
-
-export interface Markers {
-  CustomerCode: string;
-  Latitude: number;
-  Longitude: number;
-  CustomerAddressInfoID?: null;
-  CustomerProvinceID?: null;
-  CustomerID: string;
-  CustomerCityTitle: string;
-  CustomerFullName: string;
-  CustomerTypeID: number;
-  IsHeavy: boolean;
-  DossierDetailTypeID: number;
-  ShopCode?: string | null;
-  Goods?: GoodsEntity[] | null;
-  FreightValue: number;
-  DossierDetailID: string;
-  CarTypeID?: null;
-  CustomerAddress: string;
-  StatusCode: string;
-  StatusTitle: string;
-  Shop?: Shop | null;
-  SumEstimationOfDelivery: number;
-  SumVolume: number;
-  IsPickup: boolean;
-  ContactNumber?: string | null;
-  PostalCode?: null;
-  CustomerProvinceTitle: string;
-  EmployerAddress: string;
-  EmployerFullName: string;
-  DeliveryTimeID: number;
-  DeliveryTimeTitle: string;
-  DossierTypeID: number;
-}
-export interface GoodsEntity {
-  GoodsTitle: string;
-  GoodsSystemCode: string;
+export interface ProductsEntity {
+  ProductTitle: string;
+  ProductCode: string;
+  DossierDetailNumber: string;
   Quantity: number;
   ServiceTypeID: number;
-  ServiceType: string;
-  IsHeavy: boolean;
-  GoodCode?: null;
-  CustomerFullName?: null;
-  CustomerID?: null;
-  CustomerAddress?: null;
-  CustomerCellPhone?: null;
-  Customer?: null;
-  ShippingDetailID: string;
-  IsPickup: boolean;
-  EstimationOfDelivery: number;
   Volume: number;
-  CustomerAddressInfoID: string;
-  EmployerAddressInfoID: string;
-  DossierDetailTypeID: number;
-  DossierDetailTypeTitle: string;
-  FreightValue: number;
-  SaleAreaID: number;
-  SaleAreaTitle: string;
 }
-export interface Shop {
-  ShopName?: null;
-  ShopCode: string;
-  ShopAddress: string;
-  ShopContactNumber?: null;
-  ShopFullName: string;
-  ShopID: string;
+
+export interface Markers {
+  InstallmentEstatment: number;
+  CustomerName: string;
+  CustomerAddress: string;
   Latitude: number;
   Longitude: number;
+  MarkerID: number;
+  Products?: (ProductsEntity)[] | null;
 }
 
 
 export interface RouteDetailsType{
-  Point?: GoodsEntity[] | null;
+  Point?: Markers[] | null;
 }
