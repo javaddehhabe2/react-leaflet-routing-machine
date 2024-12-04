@@ -35,3 +35,9 @@ code {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+.leaflet-container{
+  font-family: IranYekan !important;
+}
+.leaflet-bar{
+  display: none !important;
+}

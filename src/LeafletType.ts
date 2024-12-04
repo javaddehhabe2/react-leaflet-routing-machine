@@ -1,7 +1,9 @@
 import { DivIcon } from "leaflet";
+import { Marker } from "./MarkerType";
 
+export type LassoController='Disable'|'Add'|'Remove';
 export interface RouteCoordinate {
-  Route: Markers[];
+  Route: Marker[];
 }
 export interface RouteDetailType {
   index: number;
@@ -9,43 +11,23 @@ export interface RouteDetailType {
   Time?: string;
 }
 export interface RoutingType {
-  Coordinates: RouteCoordinate[];
   UpdateRouteDetail: (index: number, Distance: string, Time: string) => void;
-  setCurrentRouteIndex: React.Dispatch<
-    React.SetStateAction<number>
-  >;
+  setCurrentRouteIndex: React.Dispatch<React.SetStateAction<number>>;
   ondblclickMarker: (lat: number, lng: number) => void;
   removedMarker: number | undefined;
   setRemovedMarker: React.Dispatch<React.SetStateAction<number | undefined>>;
-  Icon: ({ Marker, text, color }: IconType) => DivIcon;
+  Icon: ({ type, text, color, isSelected }: IconType) => DivIcon;
+  drawLasso:LassoController;
+  setDrawLasso:React.Dispatch<React.SetStateAction<LassoController>>;
 }
 
 export interface IconType {
-  Marker?:Markers;
+  type: number;
   text?: string;
   color?: string;
+  isSelected: boolean;
 }
 
-export interface ProductsEntity {
-  ProductTitle: string;
-  ProductCode: string;
-  DossierDetailNumber: string;
-  Quantity: number;
-  ServiceTypeID: number;
-  Volume: number;
-}
-
-export interface Markers {
-  InstallmentEstatment: number;
-  CustomerName: string;
-  CustomerAddress: string;
-  Latitude: number;
-  Longitude: number;
-  MarkerID: number;
-  Products?: (ProductsEntity)[] | null;
-}
-
-
-export interface RouteDetailsType{
-  Point?: Markers[] | null;
+export interface RouteDetailsType {
+  Point?: Marker[] | null;
 }

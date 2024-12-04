@@ -1,22 +1,35 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import "leaflet-routing-machine-custom";
+import {
+  type LassoControl,
+  type LassoHandlerFinishedEvent,
+} from "leaflet-lasso";
 import { useMap } from "react-leaflet";
 import { RoutingType } from "./LeafletType";
 import { Color } from "./MapData";
+import { useAppContext } from "./context/AppContext";
 
+import { type LeafletEvent } from "leaflet";
+
+// import * as Leaflet  from 'leaflet';
+require("leaflet-lasso");
 const Leaflet = require("leaflet");
 
 export default function Routing({
-  Coordinates,
   UpdateRouteDetail,
   setCurrentRouteIndex,
   ondblclickMarker,
   removedMarker,
   setRemovedMarker,
   Icon,
+  drawLasso,
+  setDrawLasso,
 }: RoutingType) {
   const map = useMap();
+
   const [routes, setRoutes] = useState<any[]>([]);
+  const { coordinates } = useAppContext();
+  const lassoRef = useRef<LassoControl>();
 
   const ClearAll = useCallback(() => {
     if (map) {
@@ -30,17 +43,26 @@ export default function Routing({
     }
   }, [map, routes]);
 
+  const CreateRouteLasso = useCallback(() => {}, [coordinates]);
+
+  const DeleteRouteLasso = useCallback(() => {}, [coordinates]);
+
   useEffect(() => {
     if (!map) return;
 
-    if (Coordinates.length === 0) ClearAll();
+    if (coordinates.length === 0) ClearAll();
 
     if (removedMarker !== undefined) {
       ClearAll();
       setRemovedMarker(undefined);
     }
     const tmp_item = [...routes];
-    Coordinates.map((route, index) => {
+    //  const  gg= Leaflet.control.lasso().addTo(map);
+
+    // L.control.lasso().addTo(map);
+    // ref.current=Leaflet.lassoSelect().addTo(map);
+
+    coordinates.map((route, index) => {
       const _routeColor = Color[index] ? Color[index] : "blue";
       const _tmp = route.Route.map((object) =>
         Leaflet.latLng(object.Latitude, object.Longitude)
@@ -65,7 +87,7 @@ export default function Routing({
               {
                 color: _routeColor,
                 opacity: 1,
-                weight: 6,
+                weight: 4,
               },
             ],
           });
@@ -78,16 +100,32 @@ export default function Routing({
           return line;
         },
         createMarker: function (i: any, wp: any, nWps: any) {
-          return Leaflet.marker(wp.latLng, {
-            keyboard: true,
-            icon: Icon({  text: i + 1, color: _routeColor }),
-          })
-            // .on("click", function (e: any) {
-            //   console.log("there be dragons start!!", e);
-            // })
-            .on("dblclick", function (e: any) {
-              ondblclickMarker(e.latlng.lat, e.latlng.lng);
-            });
+          let _type = 1;
+          route.Route.map((object) => {
+            if (
+              wp.latLng.lat === object.Latitude &&
+              wp.latLng.lng === object.Longitude
+            )
+              _type = object.MarkerID;
+          });
+          return (
+            Leaflet.marker(wp.latLng, {
+              keyboard: true,
+              icon: Icon({
+                type: _type,
+                text: i + 1,
+                color: _routeColor,
+                isSelected: true,
+              }),
+            })
+              .bindPopup("<p>You are here </p>")
+              // .on("click", function (e: any) {
+              //   console.log("there be dragons start!!", e);
+              // })
+              .on("dblclick", function (e: any) {
+                ondblclickMarker(e.latlng.lat, e.latlng.lng);
+              })
+          );
         },
       })
         .on("routeselected", function (e: any) {
@@ -105,7 +143,39 @@ export default function Routing({
     });
 
     return () => ClearAll();
-  }, [Coordinates]);
+  }, [coordinates]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    
+    const RouteLasso = (event: LeafletEvent) => {
+      console.log(event, drawLasso);
+    };
+
+    const ToggleLasso = () => {
+      if (lassoRef.current) {
+        if (!lassoRef.current.enabled()) lassoRef.current.enable();
+      }
+    };
+
+    if (!lassoRef.current) {
+      lassoRef.current = Leaflet.control.lasso().addTo(map);
+      map.on("lasso.finished", (event: LeafletEvent) => {
+        RouteLasso(event);
+
+        setDrawLasso("Disable");
+      });
+    }
+    console.log(drawLasso);
+    if (drawLasso === "Disable") {
+      if (lassoRef.current) lassoRef.current.disable();
+      return;
+    }
+
+
+    if (["Add", "Remove"].includes(drawLasso)) ToggleLasso();
+  }, [drawLasso]);
 
   const RouteClicked = useCallback(
     (index: number) => setCurrentRouteIndex(index),

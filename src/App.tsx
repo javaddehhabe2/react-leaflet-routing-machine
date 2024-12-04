@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
 import {
@@ -9,22 +9,32 @@ import {
   DivIcon,
 } from "leaflet";
 import Routing from "./Routing";
-import { Button, Stack, Divider } from "@mui/material";
+import {
+  createTheme,
+  ThemeProvider,
+  Button,
+  Stack,
+  Divider,
+} from "@mui/material";
 import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
-
+import { PiTruckTrailerBold } from "react-icons/pi";
+import { TbMapPlus, TbMapMinus, TbRefresh, TbEye } from "react-icons/tb";
+import { LiaTruckPickupSolid } from "react-icons/lia";
 
 import {
   RouteCoordinate,
   RouteDetailType,
   IconType,
-  Markers,
+  LassoController,
 } from "./LeafletType";
+import { Marker as MarkerType } from "./MarkerType";
 import { MarkersDetail, MARKERS } from "./MapData";
 import { renderToStaticMarkup } from "react-dom/server";
-
+import Header from "./Header/Header";
 import RouteDetails from "./RouteDetails/RouteDetails";
+import { SetMarkerColor } from "./Utility";
 
-import { createTheme, ThemeProvider } from "@mui/material";
+import { AppContextType, AppContextProvider } from "./context/AppContext";
 
 const theme = createTheme({
   typography: {
@@ -46,30 +56,41 @@ function App() {
   const [currentRouteIndex, setCurrentRouteIndex] = useState<number>(0);
   const [removedMarker, setRemovedMarker] = useState<number>();
   const [routeDetail, setRouteDetail] = useState<RouteDetailType[]>([]);
+  const [drawLasso, setDrawLasso] = useState<LassoController>("Disable");
+  const MarkerType = useCallback((Type: number = 1, isSelected = false) => {
+    switch (Type) {
+      case 1:
+        return `fi-${isSelected ? "s" : "t"}s-marker`;
+      case 2:
+        return `fi-${isSelected ? "s" : "t"}s-land-layer-location`;
+      case 3:
+        return `fi-${isSelected ? "s" : "t"}s-location-alt`;
+      case 4:
+        return `fi-${isSelected ? "s" : "t"}s-marker-time`;
+      default:
+        return `fi-${isSelected ? "s" : "t"}s-marker`;
+    }
+  }, []);
 
-  const MarkerType= useCallback((Marker:Markers|undefined)=>{
-
-  return 'fi-ts-marker-time';
-  
-  },[]);
   const Icon = useCallback(
-    ({ Marker , text, color }: IconType) =>
+    ({ type, text, color, isSelected }: IconType) =>
       new DivIcon({
         html: renderToStaticMarkup(
           <div className="absolute left-0 -top-6">
-            { 
+            {
               <i
-                className={`fi ${MarkerType(Marker)}`} style={{ fontSize:'1.75rem', color: color }}
+                className={`fi ${MarkerType(type, isSelected)}`}
+                style={{ fontSize: "1.75rem", color: color }}
               ></i>
             }
-            {/* {text ? (
+            {text ? (
               <span
-                className="absolute w-[50%] h-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] badge"
-                style={{ color: "white", backgroundColor: color }}
+                className="absolute w-[70%]  left-[50%]  translate-x-[-50%] bottom-0 text-center text-xxs font-medium rounded-sm text-white"
+                style={{ backgroundColor: color }}
               >
                 {text}
               </span>
-            ) : null} */}
+            ) : null}
           </div>
         ),
         iconSize: [10, 10], // size of the icon
@@ -110,7 +131,7 @@ function App() {
           (el) => el.Latitude === lat && el.Longitude === lng
         );
         if (_Marker) {
-          const _m: Markers = _Marker;
+          const _m: MarkerType = _Marker;
           const nextRoute = coordinates.map((_route, index) => {
             if (index === currentRouteIndex) {
               const tmp = { ..._route };
@@ -129,11 +150,6 @@ function App() {
   const NewRoute = useCallback(() => {
     setCurrentRouteIndex(coordinates.length);
   }, [coordinates, setCurrentRouteIndex]);
-
-  const DeleteRoutes = useCallback(() => {
-    setCurrentRouteIndex(0);
-    setCoordinates([]);
-  }, [setCurrentRouteIndex, setCoordinates]);
 
   const UpdateRouteDetail = useCallback(
     (index: number, Distance: string, Time: string) => {
@@ -155,71 +171,145 @@ function App() {
     [routeDetail, setRouteDetail]
   );
 
+  const DrawLasso = useCallback(
+    (Action: LassoController) => {
+      console.log(drawLasso , Action);
+
+      if (drawLasso === Action) {
+        setDrawLasso("Disable");
+        return;
+      }
+
+      switch (Action) {
+        case "Add":
+          setDrawLasso("Add");
+          break;
+        case "Remove":
+          setDrawLasso("Remove");
+          break;
+      }
+    },
+    [drawLasso]
+  );
+
+  const contextValue: AppContextType = {
+    coordinates,
+    setCoordinates,
+    NewRoute,
+  };
+
   return (
     <ThemeProvider theme={theme}>
-      <MapContainer
-        doubleClickZoom={false}
-        center={position}
-        zoom={11}
-        style={{ height: "100vh" }}
-        zoomControl={false}
-      >
-        <TileLayer
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Routing
-          Coordinates={coordinates}
-          UpdateRouteDetail={UpdateRouteDetail}
-          setCurrentRouteIndex={setCurrentRouteIndex}
-          ondblclickMarker={ondblclickMarker}
-          removedMarker={removedMarker}
-          setRemovedMarker={setRemovedMarker}
-          Icon={Icon}
-        />
-        {MarkersDetail.map((_marker, index) => (
-          <Marker
-            key={index}
-            position={[_marker.Latitude, _marker.Longitude]}
-            draggable={false}
-            bubblingMouseEvents={false}
-            eventHandlers={{
-              click: (e) => onClickMarker(e),
-            }}
-            icon={Icon({Marker:_marker, text: "", color: "blue" })}
+      <AppContextProvider initialValue={contextValue}>
+        <MapContainer
+          doubleClickZoom={false}
+          center={position}
+          zoom={11}
+          style={{ height: "100vh" }}
+          zoomControl={false}
+        >
+          <TileLayer
+            attribution=""
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-        ))}
+          <Routing
+            UpdateRouteDetail={UpdateRouteDetail}
+            setCurrentRouteIndex={setCurrentRouteIndex}
+            ondblclickMarker={ondblclickMarker}
+            removedMarker={removedMarker}
+            setRemovedMarker={setRemovedMarker}
+            Icon={Icon}
+            drawLasso={drawLasso}
+            setDrawLasso={setDrawLasso}
+          />
+          {MarkersDetail.map((_marker, index) => (
+            <Marker
+              key={index}
+              position={[_marker.Latitude, _marker.Longitude]}
+              draggable={false}
+              bubblingMouseEvents={false}
+              eventHandlers={{
+                click: (e) => onClickMarker(e),
+              }}
+              icon={Icon({
+                type: _marker.MarkerID,
+                text: "",
+                color: SetMarkerColor(
+                  coordinates,
+                  _marker.Latitude,
+                  _marker.Longitude
+                )
+                  ? "transparent"
+                  : "blue",
+                isSelected: false,
+              })}
+            >
+              <Popup>
+                A pretty CSS3 popup. <br /> Easily customizable.
+              </Popup>
+            </Marker>
+          ))}
 
-        <Control position="bottomleft" prepend>
-          <Stack
-            direction="column"
-            spacing={2}
-            divider={<Divider orientation="vertical" flexItem />}
+          <Control position="bottomleft" prepend>
+            <div className="w-[15vw]">
+              <div className="divide-y divide-gray-300 text-gray-600  ">
+                <div className="flex flex-row justify-between px-5 py-2">
+                  <div>مسیر</div>
+                  <div>12</div>
+                </div>
+                <div className="flex flex-row  justify-between px-5 py-2">
+                  <div>سفارش</div>
+                  <div>12</div>
+                </div>
+                <div className="flex flex-row  justify-between px-5 py-2">
+                  <div>کیلومتر</div>
+                  <div>12</div>
+                </div>
+                <div className="flex flex-row justify-between px-5 py-2">
+                  <div>ساعت</div>
+                  <div>12</div>
+                </div>
+              </div>
+            </div>
+          </Control>
+          <Control
+            position="topright"
+            container={{ className: "CenterControl" }}
           >
-            <Button color="inherit" onClick={NewRoute}>
-              <AddIcon />
-            </Button>
-            <Button color="inherit" onClick={DeleteRoutes}>
-              <DeleteIcon />
-            </Button>
-          </Stack>
-        </Control>
+            <div className="flex flex-row text-gray-600">
+              <div className="p-2">
+                <TbMapPlus size={20} onClick={() => DrawLasso("Add")} />
+              </div>
+              <div className="p-2">
+                <TbMapMinus size={20} onClick={() => DrawLasso("Remove")} />
+              </div>
+              <div className="p-2">
+                <LiaTruckPickupSolid size={20} />
+              </div>
+              <div className="p-2">
+                <PiTruckTrailerBold size={20} />
+              </div>
 
-        <Control position="topright">
-          {coordinates && coordinates[currentRouteIndex] ? (
-            <RouteDetails
-              Points={coordinates[currentRouteIndex]}
-              Detail={routeDetail[currentRouteIndex]}
-            />
-          ) : null}
-        </Control>
-        <Control position="topright">
-          <RouteDetails
-            Points={MARKERS}
-            Detail={routeDetail[currentRouteIndex]}
-          />
-        </Control>
-      </MapContainer>
+              <div className=" border-r inline-block  p-2 border-gray-500">
+                <TbEye size={20} />
+              </div>
+              <div className="p-2">
+                <TbRefresh size={20} />
+              </div>
+            </div>
+          </Control>
+
+          <Control position="topleft">
+            <Stack style={{ width: "100vw" }}>
+              <Header />
+              <RouteDetails
+                Points={coordinates[currentRouteIndex]}
+                Detail={routeDetail[currentRouteIndex]}
+              />
+            </Stack>
+          </Control>
+        </MapContainer>
+      </AppContextProvider>
     </ThemeProvider>
   );
 }

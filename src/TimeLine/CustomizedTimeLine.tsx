@@ -7,7 +7,7 @@ export default function CustomizedTimeline({ Points }: CustomizedTimeLineType) {
   return (
     <ol className="relative border-s border-dashed border-gray-400 my-4 mr-3">
       {Points.Route.map((point, index) => (
-        <li className="mb-10 ms-6">
+        <li key={index} className="mb-10 ms-6">
           <span className="absolute flex items-center justify-center w-6 h-6 bg-White rounded-sm -start-3 bg-white border-gray-400 border ">
             <IoMdArrowRoundDown className="text-gray-400" />
           </span>

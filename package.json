@@ -17,6 +17,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "leaflet": "^1.9.4",
+    "leaflet-lasso": "^2.2.13",
     "leaflet-routing-machine-custom": "^3.2.17",
     "material-timeline": "^1.0.4",
     "react": "^18.3.1",

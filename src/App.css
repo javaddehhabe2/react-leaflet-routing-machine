@@ -15,32 +15,31 @@
   }
 }
 
-
 .App-link {
   color: #61dafb;
 }
 
-.leaflet-routing-container{
+.leaflet-routing-container {
   display: none;
 }
-.leaflet-control{
+.leaflet-control {
   border: 2px solid rgba(0, 0, 0, 0.2);
   background-color: white;
 }
-.badge {
- 
-  border-radius: 3rem; 
-  text-align: center;
-  font-size: 1.6rem;
-  font-weight: 400;
-  margin: .5rem;
-  top: 20%;
-  left: 30%;
+.leaflet-left .leaflet-control {
+  margin-left: 0% !important;
+  margin-top: 0% !important;
 }
 
-.leaflet-right .leaflet-control{
-  margin-right:0% !important;
+.leaflet-right .leaflet-control {
+  margin-right: 0% !important;
   margin-top: 0% !important;
+}
+.leaflet-top:has(.CenterControl) {
+  top: auto;
+  bottom: 0;
+  left: 35%;
+  right: auto;
 }
 @keyframes App-logo-spin {
   from {
