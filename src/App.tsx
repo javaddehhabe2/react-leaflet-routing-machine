@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import Control from "react-leaflet-custom-control";
@@ -9,17 +9,7 @@ import {
   DivIcon,
 } from "leaflet";
 import Routing from "./Routing";
-import {
-  createTheme,
-  ThemeProvider,
-  Button,
-  Stack,
-  Divider,
-} from "@mui/material";
-import { Add as AddIcon, Delete as DeleteIcon } from "@mui/icons-material";
-import { PiTruckTrailerBold } from "react-icons/pi";
-import { TbMapPlus, TbMapMinus, TbRefresh, TbEye } from "react-icons/tb";
-import { LiaTruckPickupSolid } from "react-icons/lia";
+import { createTheme, ThemeProvider, Stack } from "@mui/material";
 
 import {
   RouteCoordinate,
@@ -28,13 +18,16 @@ import {
   LassoController,
 } from "./LeafletType";
 import { Marker as MarkerType } from "./MarkerType";
-import { MarkersDetail, MARKERS } from "./MapData";
+import { MarkersDetail } from "./MapData";
 import { renderToStaticMarkup } from "react-dom/server";
 import Header from "./Header/Header";
 import RouteDetails from "./RouteDetails/RouteDetails";
 import { SetMarkerColor } from "./Utility";
 
 import { AppContextType, AppContextProvider } from "./context/AppContext";
+import MarkerPopup from "./Popup/MarkerPopup";
+import BottomCenter from "./Controller/BottomCenter";
+import BottomLeft from "./Controller/BottomLeft";
 
 const theme = createTheme({
   typography: {
@@ -52,23 +45,26 @@ function App() {
     MarkersDetail[0].Latitude,
     MarkersDetail[0].Longitude,
   ];
+  const [allMarkers, setAllMarkers] = useState<MarkerType[]>(MarkersDetail);
   const [coordinates, setCoordinates] = useState<RouteCoordinate[]>([]);
   const [currentRouteIndex, setCurrentRouteIndex] = useState<number>(0);
   const [removedMarker, setRemovedMarker] = useState<number>();
   const [routeDetail, setRouteDetail] = useState<RouteDetailType[]>([]);
   const [drawLasso, setDrawLasso] = useState<LassoController>("Disable");
+  const [hideRoute, setHideRoute] = useState(false);
+
   const MarkerType = useCallback((Type: number = 1, isSelected = false) => {
     switch (Type) {
       case 1:
-        return `fi-${isSelected ? "s" : "t"}s-marker`;
+        return `fi-${isSelected ? "s" : "r"}s-marker`;
       case 2:
-        return `fi-${isSelected ? "s" : "t"}s-land-layer-location`;
+        return `fi-${isSelected ? "s" : "r"}s-land-layer-location`;
       case 3:
-        return `fi-${isSelected ? "s" : "t"}s-location-alt`;
+        return `fi-${isSelected ? "s" : "r"}s-location-alt`;
       case 4:
-        return `fi-${isSelected ? "s" : "t"}s-marker-time`;
+        return `fi-${isSelected ? "s" : "r"}s-marker-time`;
       default:
-        return `fi-${isSelected ? "s" : "t"}s-marker`;
+        return `fi-${isSelected ? "s" : "r"}s-marker`;
     }
   }, []);
 
@@ -76,11 +72,11 @@ function App() {
     ({ type, text, color, isSelected }: IconType) =>
       new DivIcon({
         html: renderToStaticMarkup(
-          <div className="absolute left-0 -top-6">
+          <div className="absolute left-0 -top-6 ">
             {
               <i
                 className={`fi ${MarkerType(type, isSelected)}`}
-                style={{ fontSize: "1.75rem", color: color }}
+                style={{ fontSize: "1.6rem", color: color }}
               ></i>
             }
             {text ? (
@@ -114,7 +110,7 @@ function App() {
 
       setCoordinates(result);
     },
-    [coordinates, currentRouteIndex, setCoordinates, setRemovedMarker]
+    [coordinates, setCoordinates, setRemovedMarker]
   );
 
   const onClickMarker = useCallback(
@@ -127,7 +123,7 @@ function App() {
         (el) => el.Latitude === lat && el.Longitude === lng
       );
       if (!existCoor) {
-        let _Marker = MarkersDetail.find(
+        let _Marker = allMarkers.find(
           (el) => el.Latitude === lat && el.Longitude === lng
         );
         if (_Marker) {
@@ -173,8 +169,6 @@ function App() {
 
   const DrawLasso = useCallback(
     (Action: LassoController) => {
-      console.log(drawLasso , Action);
-
       if (drawLasso === Action) {
         setDrawLasso("Disable");
         return;
@@ -193,19 +187,25 @@ function App() {
   );
 
   const contextValue: AppContextType = {
+    allMarkers,
     coordinates,
+    currentRouteIndex,
+    hideRoute,
+    setHideRoute,
     setCoordinates,
     NewRoute,
+    setAllMarkers,
   };
 
   return (
     <ThemeProvider theme={theme}>
       <AppContextProvider initialValue={contextValue}>
+        <Header />
         <MapContainer
           doubleClickZoom={false}
           center={position}
           zoom={11}
-          style={{ height: "100vh" }}
+          style={{ height: "100vh", zIndex: 0 }}
           zoomControl={false}
         >
           <TileLayer
@@ -222,7 +222,7 @@ function App() {
             drawLasso={drawLasso}
             setDrawLasso={setDrawLasso}
           />
-          {MarkersDetail.map((_marker, index) => (
+          {allMarkers.map((_marker, index) => (
             <Marker
               key={index}
               position={[_marker.Latitude, _marker.Longitude]}
@@ -230,6 +230,8 @@ function App() {
               bubblingMouseEvents={false}
               eventHandlers={{
                 click: (e) => onClickMarker(e),
+                mouseover: (event) => event.target.openPopup(),
+                mouseout: (event) => event.target.closePopup(),
               }}
               icon={Icon({
                 type: _marker.MarkerID,
@@ -240,68 +242,37 @@ function App() {
                   _marker.Longitude
                 )
                   ? "transparent"
-                  : "blue",
+                  : "#38f",
                 isSelected: false,
               })}
             >
-              <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
+              <Popup closeButton={false} minWidth={281}>
+                <MarkerPopup marker={_marker} />
               </Popup>
             </Marker>
           ))}
 
-          <Control position="bottomleft" prepend>
-            <div className="w-[15vw]">
-              <div className="divide-y divide-gray-300 text-gray-600  ">
-                <div className="flex flex-row justify-between px-5 py-2">
-                  <div>مسیر</div>
-                  <div>12</div>
-                </div>
-                <div className="flex flex-row  justify-between px-5 py-2">
-                  <div>سفارش</div>
-                  <div>12</div>
-                </div>
-                <div className="flex flex-row  justify-between px-5 py-2">
-                  <div>کیلومتر</div>
-                  <div>12</div>
-                </div>
-                <div className="flex flex-row justify-between px-5 py-2">
-                  <div>ساعت</div>
-                  <div>12</div>
-                </div>
-              </div>
-            </div>
+          <Control
+            position="bottomleft"
+            prepend
+            container={{ className: "left-3" }}
+          >
+            <BottomLeft
+              routeCount="10"
+              distanceInKilometers="12"
+              htmlOrder="123"
+              timeInsight="23"
+            />
           </Control>
           <Control
             position="topright"
             container={{ className: "CenterControl" }}
           >
-            <div className="flex flex-row text-gray-600">
-              <div className="p-2">
-                <TbMapPlus size={20} onClick={() => DrawLasso("Add")} />
-              </div>
-              <div className="p-2">
-                <TbMapMinus size={20} onClick={() => DrawLasso("Remove")} />
-              </div>
-              <div className="p-2">
-                <LiaTruckPickupSolid size={20} />
-              </div>
-              <div className="p-2">
-                <PiTruckTrailerBold size={20} />
-              </div>
-
-              <div className=" border-r inline-block  p-2 border-gray-500">
-                <TbEye size={20} />
-              </div>
-              <div className="p-2">
-                <TbRefresh size={20} />
-              </div>
-            </div>
+            <BottomCenter drawLasso={drawLasso} DrawLasso={DrawLasso} />
           </Control>
 
           <Control position="topleft">
             <Stack style={{ width: "100vw" }}>
-              <Header />
               <RouteDetails
                 Points={coordinates[currentRouteIndex]}
                 Detail={routeDetail[currentRouteIndex]}

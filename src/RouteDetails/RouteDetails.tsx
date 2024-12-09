@@ -11,7 +11,7 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
   const { NewRoute } = useAppContext();
   return (
     <Card
-      sx={{ width: "25%", height: "100vh" }}
+      sx={{ width: "320px", height: "100vh" }}
       className="font-display absolute z-10"
     >
       <div className="flex bg-blue-600 pt-4 pb-4 text-gray-200  ">

@@ -1,77 +1,97 @@
 import * as React from "react";
-import { CiSearch } from "react-icons/ci";
-import { LuDatabaseBackup, LuFileX } from "react-icons/lu";
-import { RiSettings5Line } from "react-icons/ri";
-import { MdDateRange } from "react-icons/md";
+import { Tooltip } from "react-tooltip";
 export default function Header() {
   return (
-    <header className="w-[75%] top-0 left-0 absolute ">
-      <div className="bg-white border-gray-200 px-1 py-2.5 ">
-        <div className="flex flex-wrap justify-between items-center mx-auto ">
-          <span className="flex flex-row">
-            <img
-              src="https://flowbite.com/docs/images/logo.svg"
-              className="mr-3 h-5 sm:h-8"
-              alt="Flowbite Logo"
+    <div className="header flex justify-between items-center px-5 py-3 absolute top-0 left-0 h-16 z-10 bg-sidebarcolor">
+      <div className="relative mr-[10px]">
+        <i className="fi fi-rr-search text-base text-textcolor cursor-pointer absolute right-2 top-1 "></i>
+        <input className="h-8 border-none rounded bg-inputcolor w-[450px] pr-8" />
+      </div>
+      <div className="text-sm text-textcolor cursor-pointer flex gap-3 items-center relative">
+        <div>
+          <div
+            className="rounded p-[6px] w-[117px] h-8 flex justify-around"
+            id="calendarIcon"
+          >
+            <i className="fi fi-rr-calendar-days text-base"></i>
+            <input
+              type="text"
+              id="filterDate"
+              name="filterDate"
+              className="w-[74px] text-center border-none pointer-events-none"
+              onChange={()=>{}}
             />
-            <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-              درنا
-            </span>
-          </span>
-          <div className="flex items-center lg:order-2">
-            <div className="w-[8vw] mx-1">
-              <div className="relative">
-                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <CiSearch />
-                </div>
-                <input
-                  type="search"
-                  className="block w-full p-[0.25rem] ps-10 text-xs text-gray-700 border border-gray-300 rounded-lg bg-gray-200"
-                  required
-                />
-              </div>
-            </div>
-            <div className="w-[8vw]  mx-1">
-              <button
-                type="submit"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-xxs px-4 py-[0.5rem]"
-              >
-                ذخیره همه مسیرها
-              </button>
-            </div>
-            <div className="w-[8vw]  mx-1">
-              <div className="relative max-w-sm">
-                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <MdDateRange />
-                </div>
-                <input
-                  type="text"
-                  className=" border border-gray-300 text-gray-700 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-[0.25rem] "
-                  placeholder="1403/09/12"
-                />
-              </div>
-            </div>
-            <div className="inline-block mr-1">
-              <LuDatabaseBackup size={15} />
-            </div>
-            <div className="border-r inline-block  pr-1 mr-1 border-gray-500">
-              <LuFileX size={15} />
-            </div>
-            <div className="border-r inline-block  pr-1 mr-1 border-gray-500">
-              <RiSettings5Line size={15} />
-            </div>
-            <div className="w-[8vw] mx-1">
-              <select
-                id="small"
-                className="block w-full p-[0.25rem]  text-xs text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500  "
-                defaultValue="1"
-              >
-                <option value="1">محمد شهریاری</option>
-              </select>
-            </div>
           </div>
         </div>
+
+        <div className="border-right pb-[2px]">
+          <i
+            className="fi fi-rr-draw-polygon hover:onhover text-base p-[5px] h-6"
+            id="piloteRoute"
+          >
+            <Tooltip anchorSelect="#piloteRoute" place="bottom">
+              گروه بندی مشتری ها
+            </Tooltip>
+          </i>
+        </div>
+        <div className=" border-right pb-[2px] block" id="menuIcon">
+          <i
+            className="fi fi-rr-system-cloud hover:onhover text-base  p-[5px] h-6"
+            id="removeRouteFromLocalStorage"
+          >
+            <Tooltip anchorSelect="#removeRouteFromLocalStorage" place="bottom">
+              حذف مسیر از حافظه
+            </Tooltip>
+          </i>
+        </div>
+        <div className=" border-right pb-[2px]">
+          <i
+            id="saveAllRoute"
+            className="fi fi-rr-floppy-disks hover:onhover text-base  p-[5px] h-6"
+          >
+            <Tooltip anchorSelect="#saveAllRoute" place="bottom">
+              ذخیره ی همه ی مسیرها
+            </Tooltip>
+          </i>
+        </div>
+        <div className=" border-right pb-[2px]">
+          <i
+            className="fi fi-rr-back-up hover:onhover text-base  p-[5px] h-6"
+            id="toggleSavedRoute"
+          >
+            <Tooltip anchorSelect="#toggleSavedRoute" place="bottom">
+              نمایش مسیرهای ذخیره شده
+            </Tooltip>
+          </i>
+        </div>
+        <div className=" border-right" id="exportExcell">
+          <i className="fi fi-rr-file-excel text-base text-setting">
+            <Tooltip anchorSelect="#exportExcell" place="bottom">
+              تنظیمات
+            </Tooltip>
+          </i>
+        </div>
+        <div className=" border-right" id="setting">
+          <i className="fi fi-rr-settings text-base" id=""></i>
+        </div>
+        <div className="hidden" id="">
+          <div className="rounded" style={{ color: "rgb(255, 69, 0)" }}>
+            <input
+              type="text"
+              className="w-[27px] cursor-pointer rounded"
+              id="colorPicker"
+              value="#FF5733"
+              onChange={()=>{}}
+            />
+          </div>
+        </div>
+
+        <div className=" border-right flex gap-x-1">
+          <i className="fi fi-rr-users text-base"></i>
+          <span>محمد شهریاری</span>
+          <i className="fi fi-rr-angle-small-down"></i>
+        </div>
       </div>
-    </header>
+    </div>
   );
 }
