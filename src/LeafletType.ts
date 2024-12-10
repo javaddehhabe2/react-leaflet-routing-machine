@@ -1,7 +1,7 @@
 import { DivIcon } from "leaflet";
 import { Marker } from "./MarkerType";
 
-export type LassoController='Disable'|'Add'|'Remove';
+export type LassoController = "Disable" | "Add" | "Remove";
 export interface RouteCoordinate {
   Route: Marker[];
 }
@@ -16,9 +16,9 @@ export interface RoutingType {
   ondblclickMarker: (lat: number, lng: number) => void;
   removedMarker: number | undefined;
   setRemovedMarker: React.Dispatch<React.SetStateAction<number | undefined>>;
-  Icon: ({ type, text, color, isSelected }: IconType) => DivIcon;
-  drawLasso:LassoController;
-  setDrawLasso:React.Dispatch<React.SetStateAction<LassoController>>;
+  Icon: ({ type, text, color, isSelected, isShadow }: IconType) => DivIcon;
+  drawLasso: LassoController;
+  setDrawLasso: React.Dispatch<React.SetStateAction<LassoController>>;
 }
 
 export interface IconType {
@@ -26,6 +26,7 @@ export interface IconType {
   text?: string;
   color?: string;
   isSelected: boolean;
+  isShadow?: boolean;
 }
 
 export interface RouteDetailsType {

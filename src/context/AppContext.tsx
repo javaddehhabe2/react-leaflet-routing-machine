@@ -7,13 +7,17 @@ import React, {
   useContext,
 } from "react";
 import { Marker } from "../MarkerType";
-
+import {
+  type LatLngLiteral,
+} from "leaflet";
 const initialValue = {
   allMarkers: [],
   coordinates: [],
   currentRouteIndex: 0,
   hideRoute: false,
   routeDetail:[],
+  flying:undefined,
+  setFlying:()=>{},
   setHideRoute: () => {},
   setCoordinates: () => {},
   NewRoute: () => {},
@@ -26,6 +30,8 @@ export interface AppContextType {
   currentRouteIndex: number;
   hideRoute: boolean;
   routeDetail:RouteDetailType[];
+  flying:LatLngLiteral|undefined;
+  setFlying:Dispatch<SetStateAction<LatLngLiteral|undefined>>;
   setHideRoute: Dispatch<SetStateAction<boolean>>;
   setCoordinates: Dispatch<SetStateAction<RouteCoordinate[]>>;
   NewRoute: () => void;

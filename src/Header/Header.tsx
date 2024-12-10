@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Tooltip } from "react-tooltip";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
+import SearchInput from "./SearchInput";
 export default function Header() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -9,10 +10,11 @@ export default function Header() {
   return (
     <>
       <div className="header flex justify-between items-center px-5 py-3 absolute top-0 left-0 h-16 z-10 bg-sidebarcolor">
-        <div className="relative mr-[10px]">
+        <SearchInput/>
+        {/* <div className="relative mr-[10px]">
           <i className="fi fi-rr-search text-base text-textcolor cursor-pointer absolute right-2 top-1 "></i>
           <input className="h-8 border-none rounded bg-inputcolor w-[450px] pr-8" />
-        </div>
+        </div> */}
         <div className="text-sm text-textcolor cursor-pointer flex gap-3 items-center relative">
           <div>
             <div

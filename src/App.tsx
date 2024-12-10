@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
-import { MapContainer, TileLayer, Marker, Popup  } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
 import {
   type LatLngExpression,
+  type LatLngLiteral,
   type LeafletMouseEvent,
   DivIcon,
 } from "leaflet";
@@ -54,6 +55,8 @@ function App() {
   const [drawLasso, setDrawLasso] = useState<LassoController>("Disable");
   const [hideRoute, setHideRoute] = useState(false);
 
+  const [flying, setFlying] = useState<LatLngLiteral>();
+
   const MarkerType = useCallback((Type: number = 1, isSelected = false) => {
     switch (Type) {
       case 1:
@@ -70,14 +73,25 @@ function App() {
   }, []);
 
   const Icon = useCallback(
-    ({ type, text, color, isSelected }: IconType) =>
+    ({ type, text, color, isSelected, isShadow }: IconType) =>
       new DivIcon({
         html: renderToStaticMarkup(
-          <div className="absolute left-0 -top-6 ">
+          <div
+            className={`absolute ${
+              isShadow
+                ? "-left-[0.35rem] -top-[1.9rem] animate-pulse "
+                : "left-0 -top-6 "
+            }`}
+          >
             {
               <i
-                className={`fi ${MarkerType(type, isSelected)}`}
-                style={{ fontSize: "1.6rem", color: color }}
+                className={`fi ${MarkerType(type, isSelected)} ${
+                  isShadow ? "shadowMarker" : ""
+                }`}
+                style={{
+                  fontSize: isShadow ? "2.3rem" : "1.6rem",
+                  color: color,
+                }}
               ></i>
             }
             {text ? (
@@ -193,6 +207,8 @@ function App() {
     currentRouteIndex,
     hideRoute,
     routeDetail,
+    flying,
+    setFlying,
     setHideRoute,
     setCoordinates,
     NewRoute,
@@ -224,35 +240,48 @@ function App() {
             drawLasso={drawLasso}
             setDrawLasso={setDrawLasso}
           />
-          {allMarkers.map((_marker, index) => (
-            <Marker
-              key={index}
-              position={[_marker.Latitude, _marker.Longitude]}
-              draggable={false}
-              bubblingMouseEvents={false}
-              eventHandlers={{
-                click: (e) => onClickMarker(e),
-                mouseover: (event) => event.target.openPopup(),
-                mouseout: (event) => event.target.closePopup(),
-              }}
-              icon={Icon({
-                type: _marker.MarkerID,
-                text: "",
-                color: SetMarkerColor(
-                  coordinates,
-                  _marker.Latitude,
-                  _marker.Longitude
-                )
-                  ? "transparent"
-                  : "#38f",
-                isSelected: false,
-              })}
-            >
-              <Popup closeButton={false} minWidth={281}>
-                <MarkerPopup marker={_marker} />
-              </Popup>
-            </Marker>
-          ))}
+          {allMarkers.map((_marker, index) => {
+            console.log(flying);
+            return (
+              <>
+                <Marker
+                  key={index}
+                  position={[_marker.Latitude, _marker.Longitude]}
+                  draggable={false}
+                  bubblingMouseEvents={false}
+                  eventHandlers={{
+                    click: (e) => onClickMarker(e),
+                    mouseover: (event) => event.target.openPopup(),
+                    mouseout: (event) => event.target.closePopup(),
+                  }}
+                  icon={Icon({
+                    type: _marker.MarkerID,
+                    text: "",
+                    color: SetMarkerColor(
+                      coordinates,
+                      _marker.Latitude,
+                      _marker.Longitude
+                    )
+                      ? flying &&
+                        flying.lat === _marker.Latitude &&
+                        flying.lng === _marker.Longitude
+                        ? "black"
+                        : "transparent"
+                      : "#38f",
+                    isSelected: false,
+                    isShadow:
+                      flying &&
+                      flying.lat === _marker.Latitude &&
+                      flying.lng === _marker.Longitude,
+                  })}
+                >
+                  <Popup closeButton={false} minWidth={281}>
+                    <MarkerPopup marker={_marker} />
+                  </Popup>
+                </Marker>
+              </>
+            );
+          })}
 
           <Control
             position="bottomleft"

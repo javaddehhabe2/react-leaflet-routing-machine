@@ -38,6 +38,7 @@ export default function Routing({
     coordinates,
     currentRouteIndex,
     hideRoute,
+    flying,
     setCoordinates,
   } = useAppContext();
   const lassoRef = useRef<LassoControl>();
@@ -138,6 +139,7 @@ export default function Routing({
   useEffect(() => {
     CurrentRoute.current = currentRouteIndex;
   }, [currentRouteIndex]);
+ 
   useEffect(() => {
     if (!map) return;
 
@@ -227,6 +229,7 @@ export default function Routing({
               text: i + 1,
               color: _routeColor,
               isSelected: true,
+              isShadow:false,
             }),
           })
             .on("dblclick", function (e: any) {
@@ -241,7 +244,6 @@ export default function Routing({
         },
       })
         .on("routeselected", function (e: any) {
-          console.log(e);
           UpdateRouteDetail(
             index,
             e.route.summary.totalDistance,
@@ -275,6 +277,10 @@ export default function Routing({
       if (lassoRef.current && !lassoRef.current.enabled())
         lassoRef.current.enable();
   }, [drawLasso]);
+
+  useEffect(() => {
+   if(flying && map) map.flyTo(flying,15);
+  }, [flying]);
 
   const RouteClicked = useCallback(
     (index: number) => setCurrentRouteIndex(index),

@@ -16,7 +16,7 @@ export default function BottomCenter({
 }: BottomCenterType) {
   const [filterCustomer, setfilterCustomer] =
     useState<filterCustomer>("Disable");
-  const { setAllMarkers, hideRoute, setHideRoute } = useAppContext();
+  const { setAllMarkers, hideRoute, setHideRoute, setFlying } = useAppContext();
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -104,7 +104,13 @@ export default function BottomCenter({
             hideRoute ? "active" : "hover:bg-gray-200"
           }`}
         >
-          <TbEye size={25} onClick={() => setHideRoute((prev) => !prev)} />
+          <TbEye
+            size={25}
+            onClick={() => {
+              setFlying(undefined);
+              setHideRoute((prev) => !prev);
+            }}
+          />
         </div>
         <Tooltip anchorSelect="#hide-tooltip">
           مخفی کردن مسیر های جدید رسم شده

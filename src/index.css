@@ -52,6 +52,9 @@
   .setting-item select {
     @apply p-[5px] bg-labelsetting border border-hover text-modalside rounded;
   }
+  .shadowMarker{
+    text-shadow: 0 0 1em black,0 0 0.5em black, 0px 0px 0.1em black;
+  }
 }
 
 body {
