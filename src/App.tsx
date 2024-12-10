@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup  } from "react-leaflet";
+
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
 import {
@@ -191,6 +192,7 @@ function App() {
     coordinates,
     currentRouteIndex,
     hideRoute,
+    routeDetail,
     setHideRoute,
     setCoordinates,
     NewRoute,
@@ -257,12 +259,7 @@ function App() {
             prepend
             container={{ className: "left-3" }}
           >
-            <BottomLeft
-              routeCount="10"
-              distanceInKilometers="12"
-              htmlOrder="123"
-              timeInsight="23"
-            />
+            <BottomLeft />
           </Control>
           <Control
             position="topright"

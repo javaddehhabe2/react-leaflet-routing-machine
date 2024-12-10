@@ -217,7 +217,7 @@ export default function Routing({
             )
               _Marker = object;
           });
-          const popup = Leaflet.popup()
+          const popup = Leaflet.popup({closeButton: false})
             .setLatLng(wp.latLng)
             .setContent(renderToStaticMarkup(<MarkerPopup marker={_Marker} />));
           return Leaflet.marker(wp.latLng, {
@@ -241,6 +241,7 @@ export default function Routing({
         },
       })
         .on("routeselected", function (e: any) {
+          console.log(e);
           UpdateRouteDetail(
             index,
             e.route.summary.totalDistance,

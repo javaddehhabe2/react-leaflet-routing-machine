@@ -6,17 +6,22 @@ import { MarkersDetail } from "../MapData";
 import { TbMapPlus, TbMapMinus, TbRefresh, TbEye } from "react-icons/tb";
 import { LiaTruckPickupSolid } from "react-icons/lia";
 import { useAppContext } from "../context/AppContext";
+
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+
 export default function BottomCenter({
   drawLasso,
   DrawLasso,
 }: BottomCenterType) {
   const [filterCustomer, setfilterCustomer] =
     useState<filterCustomer>("Disable");
-  const { setAllMarkers,  hideRoute, setHideRoute } =
-    useAppContext();
-    // useEffect(() => {
-    //   console.log(drawLasso);
-    // },[drawLasso])
+  const { setAllMarkers, hideRoute, setHideRoute } = useAppContext();
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   useEffect(() => {
     switch (filterCustomer) {
       case "Heavy":
@@ -36,6 +41,7 @@ export default function BottomCenter({
         break;
     }
   }, [filterCustomer]);
+
   return (
     <>
       <div className="flex flex-row text-gray-950 py-2">
@@ -107,10 +113,75 @@ export default function BottomCenter({
           id="guid-tooltip"
           className="p-3 cursor-pointer hover:bg-gray-200 rounded-md  mx-1"
         >
-          <TbRefresh size={25} />
+          <TbRefresh size={25} onClick={handleOpen} />
         </div>
         <Tooltip anchorSelect="#guid-tooltip">راهنما</Tooltip>
       </div>
+
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          style={{ transform: "translate(-50%, -50%)" }}
+          position={"absolute"}
+          top={"50%"}
+          left={"50%"}
+          padding={"20px"}
+          bgcolor={"#fefefe"}
+          border={1}
+          borderColor={"#888"}
+          borderRadius={3}
+          margin={0}
+          boxSizing={"border-box"}
+          width={"45%"}
+          maxWidth={600}
+        >
+          <div className="flex flex-row-reverse justify-between border-b border-b-togglecolor">
+            <h2 className="p-[10px] text-right w-full">راهنما </h2>
+          </div>
+          <div className=" grid grid-cols-3 gap-y-[5px]">
+            <div className="form-row">
+              <div className="form-group guide-item">
+                <i className="fi fi-rr-warehouse-alt text-primarycolor"></i>
+                <span className="text-sm">انبار</span>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group guide-item">
+                <i className="fi fi-rr-marker text-primarycolor"></i>
+                <span className="text-sm">مشتری</span>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group guide-item">
+                <i className="fi fi-rr-shop text-primarycolor"></i>
+                <span className="text-sm">فروشگاه</span>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group guide-item">
+                <i className="fi fi-rr-location-alt text-primarycolor"></i>
+                <span className="text-sm">مشتری با بارسنگین</span>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group guide-item">
+                <i className="fi fi-rr-marker-time text-primarycolor"></i>
+                <span className="text-sm">ارسال از فروشگاه</span>
+              </div>
+            </div>
+            <div className="form-row">
+              <div className="form-group guide-item">
+                <i className="fi fi-rr-land-layer-location text-primarycolor"></i>
+                <span className="text-sm">ارسال از فروشگاه با بارسنگین</span>
+              </div>
+            </div>
+          </div>
+        </Box>
+      </Modal>
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { RouteCoordinate } from "../LeafletType";
+import { RouteCoordinate,RouteDetailType } from "../LeafletType";
 import React, {
   Dispatch,
   SetStateAction,
@@ -13,6 +13,7 @@ const initialValue = {
   coordinates: [],
   currentRouteIndex: 0,
   hideRoute: false,
+  routeDetail:[],
   setHideRoute: () => {},
   setCoordinates: () => {},
   NewRoute: () => {},
@@ -24,6 +25,7 @@ export interface AppContextType {
   coordinates: RouteCoordinate[];
   currentRouteIndex: number;
   hideRoute: boolean;
+  routeDetail:RouteDetailType[];
   setHideRoute: Dispatch<SetStateAction<boolean>>;
   setCoordinates: Dispatch<SetStateAction<RouteCoordinate[]>>;
   NewRoute: () => void;

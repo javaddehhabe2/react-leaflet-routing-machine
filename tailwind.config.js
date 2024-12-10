@@ -24,6 +24,9 @@ module.exports = {
         inputcolor: "#e5e6e6",
         hover: "#444",
         setting: "#00970a",
+        modalside: "#ccc",
+        close:'#aaa',
+        labelsetting:'#1a1a1a'
       },
     },
   },
