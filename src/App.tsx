@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
 import {
@@ -16,20 +15,23 @@ import { createTheme, ThemeProvider, Stack } from "@mui/material";
 import {
   RouteCoordinate,
   RouteDetailType,
-  IconType,
   LassoController,
+  RouteDetailsLS,
+  SettingsType,
 } from "./LeafletType";
 import { Marker as MarkerType } from "./MarkerType";
-import { MarkersDetail } from "./MapData";
+import { DefaultColor, MarkersDetail, ShopIconColor } from "./MapData";
 import { renderToStaticMarkup } from "react-dom/server";
 import Header from "./Header/Header";
 import RouteDetails from "./RouteDetails/RouteDetails";
-import { SetMarkerColor } from "./Utility";
 
 import { AppContextType, AppContextProvider } from "./context/AppContext";
 import MarkerPopup from "./Popup/MarkerPopup";
 import BottomCenter from "./Controller/BottomCenter";
 import BottomLeft from "./Controller/BottomLeft";
+import { Storage } from "./Storage/Storage";
+import Icon1 from "./Icon/Icon";
+import MarkerShopPopup from "./Popup/MarkerShopPopup";
 
 const theme = createTheme({
   typography: {
@@ -55,63 +57,90 @@ function App() {
   const [drawLasso, setDrawLasso] = useState<LassoController>("Disable");
   const [hideRoute, setHideRoute] = useState(false);
 
+  const [shops, setShops] = useState<MarkerType[]>([]);
+
   const [flying, setFlying] = useState<LatLngLiteral>();
 
-  const MarkerType = useCallback((Type: number = 1, isSelected = false) => {
-    switch (Type) {
-      case 1:
-        return `fi-${isSelected ? "s" : "r"}s-marker`;
-      case 2:
-        return `fi-${isSelected ? "s" : "r"}s-land-layer-location`;
-      case 3:
-        return `fi-${isSelected ? "s" : "r"}s-location-alt`;
-      case 4:
-        return `fi-${isSelected ? "s" : "r"}s-marker-time`;
-      default:
-        return `fi-${isSelected ? "s" : "r"}s-marker`;
+  const [showDriver, setShowDriver] = useState(false);
+
+  // setting state
+  const [timeDistance, setTimeDistance] = useState<number>();
+  const [fixedWorkingHours, setFixedWorkingHours] = useState<number>();
+  const [vanVolume, setVanVolume] = useState<number>();
+  const [isuzuVolume, setIsuzuVolume] = useState<number>();
+  const [isHeavy, setIsHeavy] = useState<boolean>();
+  const [saveToLocal, setSaveToLocal] = useState<boolean>();
+
+  useEffect(() => {
+    const _Settings: SettingsType = JSON.parse(
+      Storage.getLocal("LS_Settings") ?? "[]"
+    );
+    if (_Settings) {
+      setTimeDistance(_Settings.TimeDistance);
+      setFixedWorkingHours(_Settings.FixedWorkingHours);
+      setIsuzuVolume(_Settings.IsuzuVolume);
+      setVanVolume(_Settings.VanVolume);
+      setSaveToLocal(_Settings.SaveToLocal);
+    }
+
+    const LocalRoute: RouteCoordinate[] = JSON.parse(
+      Storage.getLocal("LS_Route") ?? "[]"
+    );
+    const LocalRouteDetail: RouteDetailsLS = JSON.parse(
+      Storage.getLocal("LS_Route_Detail") ?? "{}"
+    );
+    if (LocalRoute.length > 0 && coordinates.length === 0) {
+      setCoordinates(LocalRoute);
+      if (
+        LocalRouteDetail.currentRouteIndex &&
+        LocalRouteDetail.currentRouteIndex < LocalRoute.length
+      )
+        setCurrentRouteIndex(LocalRouteDetail.currentRouteIndex);
     }
   }, []);
 
-  const Icon = useCallback(
-    ({ type, text, color, isSelected, isShadow }: IconType) =>
-      new DivIcon({
-        html: renderToStaticMarkup(
-          <div
-            className={`absolute ${
-              isShadow
-                ? "-left-[0.35rem] -top-[1.9rem] animate-pulse "
-                : "left-0 -top-6 "
-            }`}
-          >
-            {
-              <i
-                className={`fi ${MarkerType(type, isSelected)} ${
-                  isShadow ? "shadowMarker" : ""
-                }`}
-                style={{
-                  fontSize: isShadow ? "2.3rem" : "1.6rem",
-                  color: color,
-                }}
-              ></i>
-            }
-            {text ? (
-              <span
-                className="absolute w-[70%]  left-[50%]  translate-x-[-50%] bottom-0 text-center text-xxs font-medium rounded-sm text-white"
-                style={{ backgroundColor: color }}
-              >
-                {text}
-              </span>
-            ) : null}
-          </div>
-        ),
-        iconSize: [10, 10], // size of the icon
-        className: "",
-      }),
-    [MarkerType]
-  );
+  useEffect(() => {
+    setFlying(undefined);
+    // console.log(coordinates);
+    Storage.setLocal("LS_Route", JSON.stringify(coordinates));
+  }, [coordinates]);
+
+  useEffect(() => {
+    Storage.setLocal("LS_Route_Detail", JSON.stringify({ currentRouteIndex }));
+  }, [currentRouteIndex]);
+
+  useEffect(() => {
+    if (shops.length > 0) return;
+    const _Shops: MarkerType[] = [];
+
+    MarkersDetail.map((marker) => {
+      if (marker.Shops) {
+        marker.Shops.map((_m) => {
+          _Shops.push({
+            CustomerID: _m.ShopCode,
+            CustomerName: _m.ShopName,
+            CustomerAddress: _m.ShopAddress,
+            Latitude: _m.Latitude,
+            Longitude: _m.Longitude,
+            MarkerID: 10,
+          });
+        });
+      }
+    });
+
+    const ShopArray = _Shops.filter(
+      (shop, index, self) =>
+        index ===
+        self.findIndex(
+          (t) => t.Latitude === shop.Latitude && t.Longitude === shop.Longitude
+        )
+    );
+    if (ShopArray) setShops([...ShopArray]);
+  }, [MarkersDetail]);
 
   const ondblclickMarker = useCallback(
     (lat: number, lng: number) => {
+      setFlying(undefined);
       const _tmp = [...coordinates];
       const result = _tmp.map((object, index) => {
         let _route = object.Route.filter(
@@ -122,18 +151,20 @@ function App() {
         object.Route = [..._route];
         return object;
       });
-
       setCoordinates(result);
     },
-    [coordinates, setCoordinates, setRemovedMarker]
+    [coordinates, setCoordinates, setRemovedMarker, setFlying]
   );
 
   const onClickMarker = useCallback(
     (e: LeafletMouseEvent) => {
+      setFlying(undefined);
       if (!coordinates[currentRouteIndex])
         coordinates[currentRouteIndex] = { Route: [] };
+
       const lat = e.latlng.lat,
         lng = e.latlng.lng;
+
       let existCoor = coordinates[currentRouteIndex].Route.find(
         (el) => el.Latitude === lat && el.Longitude === lng
       );
@@ -143,9 +174,30 @@ function App() {
         );
         if (_Marker) {
           const _m: MarkerType = _Marker;
+
           const nextRoute = coordinates.map((_route, index) => {
             if (index === currentRouteIndex) {
               const tmp = { ..._route };
+
+              if (_Marker?.Shops) {
+                _Marker?.Shops.map((_mrk) => {
+                  let __mrk = _route.Route.find(
+                    (el) =>
+                      el.Latitude === _mrk.Latitude &&
+                      el.Longitude === _mrk.Longitude
+                  );
+
+                  if (!__mrk) {
+                    let _MarkerShops = shops.find(
+                      (el) =>
+                        el.Latitude === _mrk.Latitude &&
+                        el.Longitude === _mrk.Longitude
+                    );
+                    if (_MarkerShops) tmp.Route.push(_MarkerShops);
+                  }
+                });
+              }
+
               tmp.Route.push(_m);
               return tmp;
             } else return _route;
@@ -155,7 +207,7 @@ function App() {
         }
       }
     },
-    [coordinates, currentRouteIndex, setCoordinates]
+    [coordinates, currentRouteIndex, setCoordinates, allMarkers, setFlying]
   );
 
   const NewRoute = useCallback(() => {
@@ -208,16 +260,70 @@ function App() {
     hideRoute,
     routeDetail,
     flying,
+    timeDistance,
+    fixedWorkingHours,
+    vanVolume,
+    isuzuVolume,
+    isHeavy,
+    saveToLocal,
+    shops,
+    setTimeDistance,
+    setFixedWorkingHours,
+    setVanVolume,
+    setIsuzuVolume,
+    setIsHeavy,
+    setSaveToLocal,
     setFlying,
     setHideRoute,
     setCoordinates,
     NewRoute,
     setAllMarkers,
   };
+  const DrawIcon = useCallback(
+    (_marker: MarkerType, RouteColor: string, indx: number) => {
+      let exist = false;
+      let Shadow = false;
 
+      coordinates.forEach((_route, indx) => {
+        let existCoor = coordinates[indx].Route.find(
+          (el) =>
+            el.Latitude === _marker.Latitude &&
+            el.Longitude === _marker.Longitude
+        );
+        if (existCoor) exist = true;
+      });
+
+      let color = RouteColor
+        ? RouteColor
+        : exist
+        ? "transparent"
+        : _marker.MarkerID === 10
+        ? ShopIconColor
+        : DefaultColor;
+
+      if (flying)
+        Shadow =
+          flying.lat === _marker.Latitude && flying.lng === _marker.Longitude;
+
+      console.log(flying);
+      if (Shadow) console.log(_marker);
+
+      return (
+        <Icon1
+          type={_marker.MarkerID}
+          text={_marker.CustomerName}
+          index={indx}
+          Shadow={Shadow}
+          isSelected={exist}
+          routeColor={color}
+        />
+      );
+    },
+    [coordinates, flying]
+  );
   return (
     <ThemeProvider theme={theme}>
-      <AppContextProvider initialValue={contextValue}>
+      <AppContextProvider initialValue={{ ...contextValue, coordinates }}>
         <Header />
         <MapContainer
           doubleClickZoom={false}
@@ -236,50 +342,60 @@ function App() {
             ondblclickMarker={ondblclickMarker}
             removedMarker={removedMarker}
             setRemovedMarker={setRemovedMarker}
-            Icon={Icon}
+            DrawIcon={DrawIcon}
             drawLasso={drawLasso}
             setDrawLasso={setDrawLasso}
           />
           {allMarkers.map((_marker, index) => {
-            console.log(flying);
             return (
-              <>
-                <Marker
-                  key={index}
-                  position={[_marker.Latitude, _marker.Longitude]}
-                  draggable={false}
-                  bubblingMouseEvents={false}
-                  eventHandlers={{
-                    click: (e) => onClickMarker(e),
-                    mouseover: (event) => event.target.openPopup(),
-                    mouseout: (event) => event.target.closePopup(),
-                  }}
-                  icon={Icon({
-                    type: _marker.MarkerID,
-                    text: "",
-                    color: SetMarkerColor(
-                      coordinates,
-                      _marker.Latitude,
-                      _marker.Longitude
-                    )
-                      ? flying &&
-                        flying.lat === _marker.Latitude &&
-                        flying.lng === _marker.Longitude
-                        ? "black"
-                        : "transparent"
-                      : "#38f",
-                    isSelected: false,
-                    isShadow:
-                      flying &&
-                      flying.lat === _marker.Latitude &&
-                      flying.lng === _marker.Longitude,
-                  })}
-                >
-                  <Popup closeButton={false} minWidth={281}>
-                    <MarkerPopup marker={_marker} />
-                  </Popup>
-                </Marker>
-              </>
+              <Marker
+                key={index}
+                position={[_marker.Latitude, _marker.Longitude]}
+                draggable={false}
+                bubblingMouseEvents={false}
+                eventHandlers={{
+                  click: (e) => onClickMarker(e),
+                  mouseover: (event) => event.target.openPopup(),
+                  mouseout: (event) => event.target.closePopup(),
+                }}
+                icon={
+                  new DivIcon({
+                    html: renderToStaticMarkup(DrawIcon(_marker, "", 0)),
+                    iconSize: [10, 10],
+                    className: "",
+                  })
+                }
+              >
+                <Popup closeButton={false} minWidth={281}>
+                  <MarkerPopup marker={_marker} />
+                </Popup>
+              </Marker>
+            );
+          })}
+
+          {shops.map((_marker, index) => {
+            return (
+              <Marker
+                key={index}
+                position={[_marker.Latitude, _marker.Longitude]}
+                draggable={false}
+                bubblingMouseEvents={false}
+                eventHandlers={{
+                  mouseover: (event) => event.target.openPopup(),
+                  mouseout: (event) => event.target.closePopup(),
+                }}
+                icon={
+                  new DivIcon({
+                    html: renderToStaticMarkup(DrawIcon(_marker, "", 0)),
+                    iconSize: [10, 10],
+                    className: "",
+                  })
+                }
+              >
+                <Popup closeButton={false} minWidth={281} className={"bg-red"}>
+                  <MarkerShopPopup marker={_marker} />
+                </Popup>
+              </Marker>
             );
           })}
 

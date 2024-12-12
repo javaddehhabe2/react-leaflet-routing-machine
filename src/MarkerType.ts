@@ -5,7 +5,7 @@ export interface Marker {
   Latitude: number;
   Longitude: number;
   MarkerID: number;
-  InstallmentEstatment: number;
+  InstallmentEstatment?: number;
   Products?: (ProductsEntity)[] | null;
   Shops?: (ShopsEntity)[] | null;
 }

@@ -17,7 +17,7 @@ export default function CustomizedTimeline({ Points }: CustomizedTimeLineType) {
             <div className="flex  flex-1 ">
               <span
                 className="bg-blue-100 text-blue-400 text-xs font-medium  py-1 px-2 rounded cursor-pointer "
-                onClick={() =>
+                onClick={() => 
                   setFlying({ lat: point.Latitude, lng: point.Longitude })
                 }
               >

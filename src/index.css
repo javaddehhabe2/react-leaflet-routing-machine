@@ -55,6 +55,11 @@
   .shadowMarker{
     text-shadow: 0 0 1em black,0 0 0.5em black, 0px 0px 0.1em black;
   }
+
+  .notDriverSelect {
+    @apply w-[288px] h-[93px] border border-r-togglecolor rounded m-4 p-4 flex items-center justify-center cursor-pointer
+}
+
 }
 
 body {

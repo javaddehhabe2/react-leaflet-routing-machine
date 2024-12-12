@@ -44,8 +44,8 @@ export default function SearchInput() {
             className="py-2 text-sm text-gray-700 dark:text-gray-200"
             aria-labelledby="dropdown-button"
           >
-            {searchResult.map((res) => (
-              <li
+            {searchResult.map((res,indx) => (
+              <li key={`search${indx}`}
                 className="p-2 border-b-[1px] border-gray-300 cursor-pointer"
                 onClick={() =>FlyTo(res)}
               >

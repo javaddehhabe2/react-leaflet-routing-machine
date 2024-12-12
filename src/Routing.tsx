@@ -3,13 +3,20 @@ import "leaflet-routing-machine-custom";
 import { type LassoControl } from "leaflet-lasso";
 import { useMap } from "react-leaflet";
 import { RoutingType, LassoController } from "./LeafletType";
-import { Color } from "./MapData";
+import { Color, DefaultColor } from "./MapData";
 import { Marker } from "./MarkerType";
 import { useAppContext } from "./context/AppContext";
 
-import { type Layer, type LeafletEvent, type LatLngLiteral } from "leaflet";
+import {
+  type Layer,
+  type LeafletEvent,
+  type LatLngLiteral,
+  DivIcon,
+} from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import MarkerPopup from "./Popup/MarkerPopup";
+import Icon1 from "./Icon/Icon";
+
 interface Layer1 extends Layer {
   _latlng?: LatLngLiteral;
 }
@@ -26,7 +33,7 @@ export default function Routing({
   ondblclickMarker,
   removedMarker,
   setRemovedMarker,
-  Icon,
+  DrawIcon,
   drawLasso,
   setDrawLasso,
 }: RoutingType) {
@@ -39,6 +46,7 @@ export default function Routing({
     currentRouteIndex,
     hideRoute,
     flying,
+    setFlying,
     setCoordinates,
   } = useAppContext();
   const lassoRef = useRef<LassoControl>();
@@ -99,6 +107,7 @@ export default function Routing({
 
   const DeleteRouteLasso = useCallback(
     (layers: Layer1[]) => {
+      setFlying(undefined);
       if (layers.length) {
         const _tmp = [...coordinates];
 
@@ -123,26 +132,27 @@ export default function Routing({
         setRemovedMarker(1);
       }
     },
-    [coordinates, setRemovedMarker, setCoordinates]
+    [coordinates, setRemovedMarker, setCoordinates, setFlying]
   );
 
   const RouteLasso = useCallback(
     (event: LeafletEvent1) => {
+      setFlying(undefined);
       if (DrawType.current === "Add")
         CreateRouteLasso(event?.layers ? event.layers : []);
       else if (DrawType.current === "Remove")
         DeleteRouteLasso(event?.layers ? event.layers : []);
       setDrawLasso("Disable");
     },
-    [DeleteRouteLasso, CreateRouteLasso, setDrawLasso]
+    [DeleteRouteLasso, CreateRouteLasso, setDrawLasso, setFlying]
   );
   useEffect(() => {
     CurrentRoute.current = currentRouteIndex;
   }, [currentRouteIndex]);
- 
+
   useEffect(() => {
     if (!map) return;
-
+    if (flying) map.flyTo(flying, 15);
     if (!lassoRef.current) {
       lassoRef.current = Leaflet.control.lasso().addTo(map);
       map.on("lasso.finished", RouteLasso);
@@ -160,7 +170,7 @@ export default function Routing({
     const tmp_item = [...routes];
 
     coordinates.map((route, index) => {
-      const _routeColor = Color[index] ? Color[index] : "blue";
+      const _routeColor = Color[index] ? Color[index] : DefaultColor;
       const _tmp = route.Route.map((object) =>
         Leaflet.latLng(object.Latitude, object.Longitude)
       );
@@ -219,17 +229,15 @@ export default function Routing({
             )
               _Marker = object;
           });
-          const popup = Leaflet.popup({closeButton: false})
+          const popup = Leaflet.popup({ closeButton: false })
             .setLatLng(wp.latLng)
             .setContent(renderToStaticMarkup(<MarkerPopup marker={_Marker} />));
           return Leaflet.marker(wp.latLng, {
             keyboard: true,
-            icon: Icon({
-              type: _Marker?.MarkerID ? _Marker.MarkerID : 1,
-              text: i + 1,
-              color: _routeColor,
-              isSelected: true,
-              isShadow:false,
+            icon: new DivIcon({
+              html: renderToStaticMarkup(DrawIcon(_Marker, _routeColor, i + 1)),
+              iconSize: [10, 10],
+              className: "",
             }),
           })
             .on("dblclick", function (e: any) {
@@ -262,7 +270,7 @@ export default function Routing({
       map.removeEventListener("lasso.finished", RouteLasso);
       ClearAll();
     };
-  }, [coordinates, hideRoute]);
+  }, [coordinates, hideRoute, flying]);
 
   useEffect(() => {
     if (!map) return;
@@ -278,13 +286,16 @@ export default function Routing({
         lassoRef.current.enable();
   }, [drawLasso]);
 
-  useEffect(() => {
-   if(flying && map) map.flyTo(flying,15);
-  }, [flying]);
+  // useEffect(() => {
+
+  // }, [flying]);
 
   const RouteClicked = useCallback(
-    (index: number) => setCurrentRouteIndex(index),
-    [setCurrentRouteIndex]
+    (index: number) => {
+      setFlying(undefined);
+      setCurrentRouteIndex(index);
+    },
+    [setCurrentRouteIndex, setFlying]
   );
   return null;
 }

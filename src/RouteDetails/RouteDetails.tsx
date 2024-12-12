@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, Typography, Divider, Button } from "@mui/material";
-import WarehouseIcon from "@mui/icons-material/Warehouse";
+
 import { RouteDetailsType } from "./Type/RouteDetailsType";
 import AddIcon from "@mui/icons-material/Add";
 import CustomizedTimeLine from "../TimeLine/CustomizedTimeLine";
 import { useAppContext } from "../context/AppContext";
 import { PiTruckTrailerBold } from "react-icons/pi";
 import { GetDistance, GetTime } from "../Utility";
+import Driver from "../Driver/Driver";
 
 export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
   const { NewRoute, coordinates, currentRouteIndex, routeDetail } =
@@ -14,6 +15,8 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
   const [distanceInKilometers, setDistanceInKilometers] = useState(`0`);
   const [timeInsight, setTimeInsight] = useState(`00:00:00`);
   const [productCount, setProductCount] = useState(0);
+  const [unloadingCount, setUnloadingCount] = useState(0);
+
   useEffect(() => {
     if (routeDetail[currentRouteIndex]) {
       setDistanceInKilometers(
@@ -28,21 +31,30 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
           routeDetail[currentRouteIndex]?.Time
             ? Number(routeDetail[currentRouteIndex].Time)
             : 0
-        )+':00'
+        ) + ":00"
       );
     } else {
       setDistanceInKilometers(`0`);
       setTimeInsight(`00:00:00`);
     }
   }, [routeDetail, currentRouteIndex]);
+
   useEffect(() => {
     if (
       coordinates[currentRouteIndex] &&
       coordinates[currentRouteIndex].Route.length
     ) {
       setProductCount(coordinates[currentRouteIndex].Route.length);
+      let _count = 0;
+      coordinates[currentRouteIndex].Route.map((_route) => {
+        _count += _route.Products ? _route.Products.length : 0;
+      });
+      setProductCount(_count);
+
+      setUnloadingCount(coordinates[currentRouteIndex].Route.length);
     } else {
       setProductCount(0);
+      setUnloadingCount(0);
     }
   }, [coordinates, currentRouteIndex]);
   return (
@@ -50,7 +62,6 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
       sx={{ width: "320px", height: "100vh" }}
       className="font-display absolute z-10"
     >
-         
       <div
         className="flex rounded mb-5 h-16 bg-primarycolor text-white justify-between p-4"
         style={{ boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)" }}
@@ -80,7 +91,7 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
             </div> */}
         </div>
       </div>
-    
+
       <Divider />
       <CardContent>
         <Button
@@ -93,6 +104,7 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
         >
           جدید
         </Button>
+        <Driver/>
         <Divider />
         <div className="flex flex-col py-4">
           <div className="flex flex-row align-baseline">
@@ -130,7 +142,10 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
               <span className="text-gray-500 text-sm font-normal">
                 تعداد تخلیه:
               </span>
-              <span className="text-gray-700 text-sm font-bold">6 مرتبه</span>
+              <span className="text-gray-700 text-sm font-bold">
+                {" "}
+                {unloadingCount} مرتبه
+              </span>
             </div>
           </div>
           <div className="flex w-full  my-1 ">

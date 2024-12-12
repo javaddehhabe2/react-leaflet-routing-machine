@@ -1,4 +1,4 @@
-export type LocalStorageKeys = "LS_Route";
+export type LocalStorageKeys = "LS_Route"|"LS_Route_Detail"|"LS_Settings";
 
 class StorageClass {
   private getKey(key: LocalStorageKeys) {
