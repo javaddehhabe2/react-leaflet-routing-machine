@@ -1,4 +1,4 @@
-import { RouteCoordinate, RouteDetailType } from "../LeafletType";
+import { CarType, CatalogType, RouteCoordinate } from "../LeafletType";
 import React, {
   Dispatch,
   SetStateAction,
@@ -8,12 +8,12 @@ import React, {
 } from "react";
 import { Marker } from "../MarkerType";
 import { type LatLngLiteral } from "leaflet";
+import { DriverType } from "../DriverType";
 const initialValue = {
   allMarkers: [],
   coordinates: [],
   currentRouteIndex: 0,
   hideRoute: false,
-  routeDetail: [],
   flying: undefined,
   timeDistance: 0,
   fixedWorkingHours: 0,
@@ -22,6 +22,14 @@ const initialValue = {
   isHeavy: false,
   saveToLocal: false,
   shops: [],
+  showDriver: false,
+  allDrivers: [],
+  carTypes: [],
+  catalogValues: [],
+  setCatalogValues: () => {},
+  setCarTypes: () => {},
+  setAllDrivers: () => {},
+  setShowDriver: () => {},
   setTimeDistance: () => {},
   setFixedWorkingHours: () => {},
   setVanVolume: () => {},
@@ -40,21 +48,28 @@ export interface AppContextType {
   coordinates: RouteCoordinate[];
   currentRouteIndex: number;
   hideRoute: boolean;
-  routeDetail: RouteDetailType[];
   flying: LatLngLiteral | undefined;
-  timeDistance?: number;
-  fixedWorkingHours?: number;
-  vanVolume?: number;
-  isuzuVolume?: number;
-  isHeavy?: boolean;
-  saveToLocal?: boolean;
+  timeDistance: number;
+  fixedWorkingHours: number;
+  vanVolume: number;
+  isuzuVolume: number;
+  isHeavy: boolean;
+  saveToLocal: boolean;
   shops: Marker[];
-  setTimeDistance: Dispatch<SetStateAction<number | undefined>>;
-  setFixedWorkingHours: Dispatch<SetStateAction<number | undefined>>;
-  setVanVolume: Dispatch<SetStateAction<number | undefined>>;
-  setIsuzuVolume: Dispatch<SetStateAction<number | undefined>>;
-  setIsHeavy: Dispatch<SetStateAction<boolean | undefined>>;
-  setSaveToLocal: Dispatch<SetStateAction<boolean | undefined>>;
+  showDriver: boolean;
+  allDrivers: DriverType[];
+  carTypes: CarType[];
+  catalogValues: CatalogType[];
+  setCatalogValues: Dispatch<SetStateAction<CatalogType[]>>;
+  setCarTypes: Dispatch<SetStateAction<CarType[]>>;
+  setAllDrivers: Dispatch<SetStateAction<DriverType[]>>;
+  setShowDriver: Dispatch<SetStateAction<boolean>>;
+  setTimeDistance: Dispatch<SetStateAction<number>>;
+  setFixedWorkingHours: Dispatch<SetStateAction<number>>;
+  setVanVolume: Dispatch<SetStateAction<number>>;
+  setIsuzuVolume: Dispatch<SetStateAction<number>>;
+  setIsHeavy: Dispatch<SetStateAction<boolean>>;
+  setSaveToLocal: Dispatch<SetStateAction<boolean>>;
 
   setFlying: Dispatch<SetStateAction<LatLngLiteral | undefined>>;
   setHideRoute: Dispatch<SetStateAction<boolean>>;

@@ -1,6 +1,5 @@
-import { RouteCoordinate,RouteDetailType } from "../../LeafletType";
+import { RouteCoordinate } from "../../LeafletType";
 
 export interface RouteDetailsType {
  Points:RouteCoordinate;
- Detail:RouteDetailType;
 }

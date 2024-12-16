@@ -3,9 +3,10 @@ import { IoMdArrowRoundDown } from "react-icons/io";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { CustomizedTimeLineType } from "./Type/CustomizedTimeLineType";
 import { useAppContext } from "../context/AppContext";
+import { GetDistance, GetTime } from "../Utility";
 
 export default function CustomizedTimeline({ Points }: CustomizedTimeLineType) {
-  const { setFlying } = useAppContext();
+  const { setFlying, timeDistance } = useAppContext();
   return (
     <ol className="relative border-s border-dashed border-gray-400 my-4 mr-3">
       {Points.Route.map((point, index) => (
@@ -17,7 +18,7 @@ export default function CustomizedTimeline({ Points }: CustomizedTimeLineType) {
             <div className="flex  flex-1 ">
               <span
                 className="bg-blue-100 text-blue-400 text-xs font-medium  py-1 px-2 rounded cursor-pointer "
-                onClick={() => 
+                onClick={() =>
                   setFlying({ lat: point.Latitude, lng: point.Longitude })
                 }
               >
@@ -27,10 +28,12 @@ export default function CustomizedTimeline({ Points }: CustomizedTimeLineType) {
             </div>
             <div className="flex  flex-1 ">
               <div className="flex w-full justify-around">
-                <span className="text-gray-700 text-xxs font-bold">0 KM</span>
+                <span className="text-gray-700 text-xxs font-bold">
+                  {GetDistance(point?.Distance ? point.Distance : 0)} KM
+                </span>
                 <div className="w-[1px] bg-gray-300 mx-1"></div>
                 <span className="text-gray-700 text-xxs font-bold">
-                  00:00:00
+                  {GetTime(point?.Distance ? point.Distance : 0, timeDistance)}
                 </span>
               </div>
             </div>

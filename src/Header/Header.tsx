@@ -1,15 +1,15 @@
 import React, { useCallback, useState } from "react";
 import { Tooltip } from "react-tooltip";
-import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
 import SearchInput from "./SearchInput";
 import { Storage } from "../Storage/Storage";
 import AlertModal from "./AlertModal";
 import SettingModal from "./SettingModal";
+
+import GetCSV from "./GetCSV";
+
 export default function Header() {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [showSettingMenu, setShowSettingMenu] = useState(false);
+
   const [showAlert, setShowAlert] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
   const RemoveRouteFromLocal = useCallback(() => {
@@ -21,10 +21,6 @@ export default function Header() {
     <>
       <div className="header flex justify-between items-center px-5 py-3 absolute top-0 left-0 h-16 z-10 bg-sidebarcolor">
         <SearchInput />
-        {/* <div className="relative mr-[10px]">
-          <i className="fi fi-rr-search text-base text-textcolor cursor-pointer absolute right-2 top-1 "></i>
-          <input className="h-8 border-none rounded bg-inputcolor w-[450px] pr-8" />
-        </div> */}
         <div className="text-sm text-textcolor cursor-pointer flex gap-3 items-center relative">
           <div>
             <div
@@ -87,23 +83,43 @@ export default function Header() {
             </i>
           </div>
           <div className=" border-right" id="exportExcell">
-            <i className="fi fi-rr-file-excel text-base text-setting">
+            <GetCSV />
               <Tooltip anchorSelect="#exportExcell" place="bottom">
-                تنظیمات
+                خروجی اکسل
               </Tooltip>
-            </i>
           </div>
-          <div className=" border-right" id="setting">
-            <i
-              className="fi fi-rr-settings text-base"
-              onClick={() => setShowSetting(true)}
-            ></i>
-          </div>
-
-          <div className=" border-right flex gap-x-1">
+          <div
+            className=" border-right flex gap-x-1"
+            onClick={() => setShowSettingMenu((prev) => !prev)}
+          >
             <i className="fi fi-rr-users text-base"></i>
             <span>محمد شهریاری</span>
             <i className="fi fi-rr-angle-small-down"></i>
+
+            {showSettingMenu ? (
+              <div className="block absolute top-10 left-0 bg-white shadow-sm shadow-black rounded z-50 w-[150px]  ">
+                <ul>
+                  <li
+                    className="border-b border-b-modalside flex pr-2 py-2 items-center"
+                    onClick={() => setShowSetting(true)}
+                  >
+                    <i className="fi fi-rr-settings mr-2"></i>
+                    <span className="text-sm font-medium pb-1 pr-1">
+                      تنظیمات
+                    </span>
+                  </li>
+                  <li className="border-b border-b-modalside flex pr-2 items-center py-2 ">
+                    <i className="fi fi-rr-exit  mr-2" title="خروج"></i>
+                    <a
+                      href="/Account/LogOut"
+                      className="text-sm font-medium  pb-1 pr-1"
+                    >
+                      خروج
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -113,11 +129,7 @@ export default function Header() {
           setShowAlert={setShowAlert}
         />
       ) : null}
-      {showSetting ? (
-        <SettingModal
-          setShowSetting={setShowSetting}
-        />
-      ) : null}
+      {showSetting ? <SettingModal setShowSetting={setShowSetting} /> : null}
     </>
   );
 }

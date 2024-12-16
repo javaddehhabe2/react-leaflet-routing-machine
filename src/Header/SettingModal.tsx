@@ -5,6 +5,8 @@ import { useAppContext } from "../context/AppContext";
 import { Storage } from "../Storage/Storage";
 import { SettingsType } from "../LeafletType";
 
+import CatalogInput from "./CatalogInput";
+
 export default function SettingModal({
   setShowSetting,
 }: {
@@ -20,6 +22,7 @@ export default function SettingModal({
     vanVolume,
     isuzuVolume,
     saveToLocal,
+    carTypes,
     setTimeDistance,
     setFixedWorkingHours,
     setVanVolume,
@@ -27,6 +30,7 @@ export default function SettingModal({
     setSaveToLocal,
   } = useAppContext();
 
+  const [show, setShow] = useState<"general" | "vehicle">("general");
   const AcceptModal = useCallback(() => {
     if (saveToLocal) {
       const _setting: SettingsType = {
@@ -35,6 +39,7 @@ export default function SettingModal({
         VanVolume: vanVolume ?? 0,
         IsuzuVolume: isuzuVolume ?? 0,
         SaveToLocal: saveToLocal ?? false,
+        carTypes: carTypes,
       };
       Storage.setLocal("LS_Settings", JSON.stringify(_setting));
     }
@@ -46,7 +51,9 @@ export default function SettingModal({
     vanVolume,
     isuzuVolume,
     saveToLocal,
+    carTypes,
   ]);
+
   return (
     <Modal
       open={true}
@@ -71,15 +78,30 @@ export default function SettingModal({
           <div className="w-[220px] bg-bodycolor py-5 flex flex-col">
             <h2 className="close settings-modal-title">تنظیمات</h2>
             <ul className="list-none p-0 m-0">
-              <li className="py-4 px-5 cursor-pointer flex gap-[10px] text-modalside settingLI active_li">
+              <li
+                className={`py-4 px-5 cursor-pointer flex gap-[10px] text-modalside settingLI  ${
+                  show === "general" ? "active_li" : ""
+                }`}
+                onClick={() => setShow("general")}
+              >
                 <i className="fi fi-rr-settings mr-[10px]" id=""></i>
                 <span className="">عمومی</span>
               </li>
+              <li
+                className={`py-4 px-5 cursor-pointer flex gap-[10px] text-modalside settingLI ${
+                  show === "vehicle" ? "active_li" : ""
+                }`}
+                onClick={() => setShow("vehicle")}
+              >
+                <i className="fi fi-rr-settings mr-[10px]" id=""></i>
+                <span className="">حجم وسیله ی نقلیه</span>
+              </li>
             </ul>
           </div>
-          <div className="p-5 flex-1 text-white overflow-y-auto relative flex flex-col gap-y-3">
+
+          <div className="p-5 flex-1 text-white overflow-y-hidden relative flex flex-col gap-y-3">
             <div className="text-textcolor mb-7 flex justify-between">
-              <h2>عمومی</h2>
+              <h2>{show === "general" ? "عمومی" : "حجم وسیله ی نقلیه"}</h2>
               <span
                 className="cursor-pointer text-close text-[28px] font-bold float-right hover:text-black"
                 onClick={handleClose}
@@ -87,69 +109,79 @@ export default function SettingModal({
                 ×
               </span>
             </div>
-            <div className="flex flex-col gap-5 flex-grow">
-              <div className="text-textcolor">
-                <div className="setting-item">
-                  <label>مدت زمان به ازای هر یک کیلومتر</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={timeDistance}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setTimeDistance(Number(e.currentTarget.value))
-                    }
-                  />
-                  <span>در دقیقه</span>
-                </div>
-                <div className="setting-item">
-                  <label>مدت زمان روز کاری</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={fixedWorkingHours}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setFixedWorkingHours(Number(e.currentTarget.value))
-                    }
-                  />
-                  <span>دقیقه در روز</span>
-                </div>
-                <div className="setting-item">
-                  <label>حجم ماشین سبک</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={vanVolume}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setVanVolume(Number(e.currentTarget.value))
-                    }
-                  />
-                  <span>متر مکعب</span>
-                </div>
-                <div className="setting-item">
-                  <label>حجم ماشین سنگین</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={isuzuVolume}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setIsuzuVolume(Number(e.currentTarget.value))
-                    }
-                  />
-                  <span>متر مکعب</span>
-                </div>
-                <div className="setting-item">
-                  <label>ذخیره در لوکال</label>
-                  <label className="switch">
+            {show === "general" ? (
+              <div className="flex flex-col gap-5 flex-grow">
+                <div className="text-textcolor">
+                  <div className="setting-item">
+                    <label>مدت زمان به ازای هر یک کیلومتر</label>
                     <input
-                      type="checkbox"
-                      defaultChecked={saveToLocal}
-                      onChange={(e) => setSaveToLocal(e.target.checked)}
+                      type="number"
+                      min="0"
+                      value={timeDistance}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setTimeDistance(Number(e.currentTarget.value))
+                      }
                     />
-                    <span className="switch-slider round"></span>
-                  </label>
+                    <span>در دقیقه</span>
+                  </div>
+                  <div className="setting-item">
+                    <label>مدت زمان روز کاری</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={fixedWorkingHours}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setFixedWorkingHours(Number(e.currentTarget.value))
+                      }
+                    />
+                    <span>دقیقه در روز</span>
+                  </div>
+                  <div className="setting-item">
+                    <label>حجم ماشین سبک</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={vanVolume}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setVanVolume(Number(e.currentTarget.value))
+                      }
+                    />
+                    <span>متر مکعب</span>
+                  </div>
+                  <div className="setting-item">
+                    <label>حجم ماشین سنگین</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={isuzuVolume}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setIsuzuVolume(Number(e.currentTarget.value))
+                      }
+                    />
+                    <span>متر مکعب</span>
+                  </div>
+                  <div className="setting-item">
+                    <label>ذخیره در لوکال</label>
+                    <label className="switch">
+                      <input
+                        type="checkbox"
+                        defaultChecked={saveToLocal}
+                        onChange={(e) => setSaveToLocal(e.target.checked)}
+                      />
+                      <span className="switch-slider round"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col gap-5 flex-grow">
+                <div className="text-textcolor">
+                  <div className="h-full grid grid-cols-2 overflow-auto">
+                    <CatalogInput />
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="text-right flex gap-[5px] justify-end">
               <button
                 type="button"

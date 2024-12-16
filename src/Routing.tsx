@@ -15,7 +15,6 @@ import {
 } from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import MarkerPopup from "./Popup/MarkerPopup";
-import Icon1 from "./Icon/Icon";
 
 interface Layer1 extends Layer {
   _latlng?: LatLngLiteral;
@@ -28,7 +27,6 @@ interface LeafletEvent1 extends LeafletEvent {
 require("leaflet-lasso");
 const Leaflet = require("leaflet");
 export default function Routing({
-  UpdateRouteDetail,
   setCurrentRouteIndex,
   ondblclickMarker,
   removedMarker,
@@ -48,6 +46,7 @@ export default function Routing({
     flying,
     setFlying,
     setCoordinates,
+    setShowDriver,
   } = useAppContext();
   const lassoRef = useRef<LassoControl>();
   const DrawType = useRef<LassoController>("Disable");
@@ -71,12 +70,12 @@ export default function Routing({
         const _tmp = [...coordinates];
 
         const newLayers: Marker[] = [];
-        layers.map((newobject) => {
+        layers.forEach((newobject) => {
           let isRemove = false;
 
-          coordinates.map((object) => {
+          coordinates.forEach((object) => {
             let _route = [...object.Route];
-            _route.map((_object) => {
+            _route.forEach((_object) => {
               if (
                 newobject._latlng?.lat === _object.Latitude &&
                 newobject._latlng?.lng === _object.Longitude
@@ -85,7 +84,7 @@ export default function Routing({
             });
           });
           if (!isRemove) {
-            allMarkers.map((_marker) => {
+            allMarkers.forEach((_marker) => {
               if (
                 _marker.Latitude === newobject._latlng?.lat &&
                 _marker.Longitude === newobject._latlng.lng
@@ -98,6 +97,25 @@ export default function Routing({
           _tmp[CurrentRoute.current] = { Route: [] };
 
         _tmp[CurrentRoute.current].Route.push(...newLayers);
+
+        const lk = _tmp[CurrentRoute.current].Route.map((_r, indx) => {
+          let Distance = 0;
+          if (indx > 0) {
+            let fromLatLng = Leaflet.latLng({
+              lat: _r.Latitude,
+              lng: _r.Longitude,
+            });
+            let toLatLng = Leaflet.latLng({
+              lat: _tmp[CurrentRoute.current].Route[indx - 1].Latitude,
+              lng: _tmp[CurrentRoute.current].Route[indx - 1].Longitude,
+            });
+
+            Distance = fromLatLng.distanceTo(toLatLng);
+          }
+          return { ..._r, Distance };
+        });
+        _tmp[CurrentRoute.current].Route = lk;
+
         setCoordinates(_tmp.filter((val) => val && val.Route.length > 0));
         setRemovedMarker(1);
       }
@@ -111,12 +129,12 @@ export default function Routing({
       if (layers.length) {
         const _tmp = [...coordinates];
 
-        coordinates.map((object, index) => {
+        coordinates.forEach((object, index) => {
           let _route = [...object.Route];
 
           const newObj = _route.filter((_object) => {
             let isRemove = false;
-            layers.map((newobject) => {
+            layers.forEach((newobject) => {
               if (
                 newobject._latlng?.lat === _object.Latitude &&
                 newobject._latlng?.lng === _object.Longitude
@@ -126,8 +144,27 @@ export default function Routing({
             if (!isRemove) return _object;
           });
 
-          _tmp[index].Route = [...newObj];
+          // get point distance
+          const lk = newObj.map((_r, indx) => {
+            let Distance = 0;
+            if (indx > 0) {
+              let fromLatLng = Leaflet.latLng({
+                lat: _r.Latitude,
+                lng: _r.Longitude,
+              });
+              let toLatLng = Leaflet.latLng({
+                lat: newObj[indx - 1].Latitude,
+                lng: newObj[indx - 1].Longitude,
+              });
+
+              Distance = fromLatLng.distanceTo(toLatLng);
+            }
+            return { ..._r, Distance };
+          });
+
+          _tmp[index].Route = [...lk];
         });
+
         setCoordinates(_tmp.filter((val) => val && val.Route.length > 0));
         setRemovedMarker(1);
       }
@@ -169,11 +206,12 @@ export default function Routing({
     }
     const tmp_item = [...routes];
 
-    coordinates.map((route, index) => {
+    coordinates.forEach((route, index) => {
       const _routeColor = Color[index] ? Color[index] : DefaultColor;
-      const _tmp = route.Route.map((object) =>
+      const _tmp = route.Route.forEach((object) =>
         Leaflet.latLng(object.Latitude, object.Longitude)
       );
+
       const item = Leaflet.Routing.control({
         waypoints: _tmp,
         routeWhileDragging: true,
@@ -222,7 +260,7 @@ export default function Routing({
             MarkerID: 1,
             InstallmentEstatment: 1,
           };
-          route.Route.map((object) => {
+          route.Route.forEach((object) => {
             if (
               wp.latLng.lat === object.Latitude &&
               wp.latLng.lng === object.Longitude
@@ -250,15 +288,7 @@ export default function Routing({
               popup.closePopup();
             });
         },
-      })
-        .on("routeselected", function (e: any) {
-          UpdateRouteDetail(
-            index,
-            e.route.summary.totalDistance,
-            e.route.summary.totalTime
-          );
-        })
-        .addTo(map);
+      }).addTo(map);
 
       tmp_item.push(item);
       setRoutes(tmp_item);
@@ -294,8 +324,9 @@ export default function Routing({
     (index: number) => {
       setFlying(undefined);
       setCurrentRouteIndex(index);
+      setShowDriver(true);
     },
-    [setCurrentRouteIndex, setFlying]
+    [setCurrentRouteIndex, setFlying, setShowDriver]
   );
   return null;
 }

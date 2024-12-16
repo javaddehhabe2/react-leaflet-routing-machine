@@ -8,6 +8,7 @@ export interface Marker {
   InstallmentEstatment?: number;
   Products?: (ProductsEntity)[] | null;
   Shops?: (ShopsEntity)[] | null;
+  Distance?:number;
 }
 export interface ProductsEntity {
   DossierDetailID: string;

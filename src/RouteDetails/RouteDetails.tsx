@@ -9,35 +9,13 @@ import { PiTruckTrailerBold } from "react-icons/pi";
 import { GetDistance, GetTime } from "../Utility";
 import Driver from "../Driver/Driver";
 
-export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
-  const { NewRoute, coordinates, currentRouteIndex, routeDetail } =
+export default function RouteDetails({ Points }: RouteDetailsType) {
+  const { NewRoute, coordinates, currentRouteIndex,  showDriver, timeDistance } =
     useAppContext();
   const [distanceInKilometers, setDistanceInKilometers] = useState(`0`);
   const [timeInsight, setTimeInsight] = useState(`00:00:00`);
   const [productCount, setProductCount] = useState(0);
   const [unloadingCount, setUnloadingCount] = useState(0);
-
-  useEffect(() => {
-    if (routeDetail[currentRouteIndex]) {
-      setDistanceInKilometers(
-        GetDistance(
-          routeDetail[currentRouteIndex]?.Distance
-            ? Number(routeDetail[currentRouteIndex].Distance)
-            : 0
-        )
-      );
-      setTimeInsight(
-        GetTime(
-          routeDetail[currentRouteIndex]?.Time
-            ? Number(routeDetail[currentRouteIndex].Time)
-            : 0
-        ) + ":00"
-      );
-    } else {
-      setDistanceInKilometers(`0`);
-      setTimeInsight(`00:00:00`);
-    }
-  }, [routeDetail, currentRouteIndex]);
 
   useEffect(() => {
     if (
@@ -52,11 +30,21 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
       setProductCount(_count);
 
       setUnloadingCount(coordinates[currentRouteIndex].Route.length);
+
+      let Distance = 0;
+        coordinates[currentRouteIndex].Route.map((_r) => (Distance += _r?.Distance ? _r?.Distance : 0));
+
+  
+      setDistanceInKilometers(GetDistance(Distance));
+      setTimeInsight(GetTime(Distance, timeDistance));
+
     } else {
       setProductCount(0);
       setUnloadingCount(0);
+      setDistanceInKilometers(GetDistance(0));
+      setTimeInsight(GetTime(0, timeDistance));
     }
-  }, [coordinates, currentRouteIndex]);
+  }, [coordinates, currentRouteIndex,timeDistance]);
   return (
     <Card
       sx={{ width: "320px", height: "100vh" }}
@@ -94,17 +82,21 @@ export default function RouteDetails({ Points, Detail }: RouteDetailsType) {
 
       <Divider />
       <CardContent>
-        <Button
-          variant="contained"
-          size="small"
-          startIcon={<AddIcon className="ml-1" />}
-          style={{ marginBottom: "1em", alignItems: "end" }}
-          className="w-full text-sm !bg-setting !text-white"
-          onClick={NewRoute}
-        >
-          جدید
-        </Button>
-        <Driver/>
+        {showDriver ? (
+          <Driver />
+        ) : (
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={<AddIcon className="ml-1" />}
+            style={{ marginBottom: "1em", alignItems: "end" }}
+            className="w-full text-sm !bg-setting !text-white"
+            onClick={NewRoute}
+          >
+            جدید
+          </Button>
+        )}
+
         <Divider />
         <div className="flex flex-col py-4">
           <div className="flex flex-row align-baseline">

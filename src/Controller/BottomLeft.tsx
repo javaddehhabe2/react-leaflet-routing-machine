@@ -1,32 +1,27 @@
-import React,{useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { useAppContext } from "../context/AppContext";
 import { GetDistance, GetTime } from "../Utility";
 export default function BottomLeft() {
+  const { coordinates, allMarkers, timeDistance } = useAppContext();
+  const [htmlOrder, setHtmlOrder] = useState(`0 از ${allMarkers.length}`);
+  const [distanceInKilometers, setDistanceInKilometers] = useState(`0`);
+  const [timeInsight, setTimeInsight] = useState(`00:00`);
+  useEffect(() => {
+    let selectedMarker = 0;
+    coordinates.map((route) => {
+      selectedMarker += route.Route.length;
+    });
+    setHtmlOrder(`${selectedMarker} از ${allMarkers.length}`);
+  }, [coordinates, allMarkers]);
+  useEffect(() => {
+    let Distance = 0;
+    coordinates.map((route) =>
+      route.Route.map((_r) => (Distance += _r?.Distance ? _r?.Distance : 0))
+    );
 
-  const { coordinates,allMarkers,routeDetail } =
-  useAppContext();
-  const [htmlOrder,setHtmlOrder]=useState(`0 از ${allMarkers.length}`);
-  const [distanceInKilometers,setDistanceInKilometers]=useState(`0`);
-  const [timeInsight,setTimeInsight]=useState(`00:00`);
-useEffect(()=>{
-  let selectedMarker=0;
-  coordinates.map((route)=>{
-    selectedMarker +=route.Route.length;
-  })
-  setHtmlOrder(`${selectedMarker} از ${allMarkers.length}`);
-},[coordinates,allMarkers]);
-useEffect(()=>{
-  let Distance=0;
-  let Time=0;
-  routeDetail.map((route)=>{
-    Distance +=route?.Distance?Number(route.Distance):0;
-    Time+=route?.Time?Number(route.Time):0;
-  });
-
-  setDistanceInKilometers( GetDistance(Distance));
-  setTimeInsight(GetTime(Time));
-
-},[routeDetail]);
+    setDistanceInKilometers(GetDistance(Distance));
+    setTimeInsight(GetTime(Distance, timeDistance));
+  }, [coordinates,timeDistance]);
 
   return (
     <div className="bg-white p-4 rounded w-52 h-44">

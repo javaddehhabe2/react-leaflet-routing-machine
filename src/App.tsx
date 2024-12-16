@@ -14,13 +14,21 @@ import { createTheme, ThemeProvider, Stack } from "@mui/material";
 
 import {
   RouteCoordinate,
-  RouteDetailType,
   LassoController,
   RouteDetailsLS,
   SettingsType,
+  CarType,
+  CatalogType,
 } from "./LeafletType";
 import { Marker as MarkerType } from "./MarkerType";
-import { DefaultColor, MarkersDetail, ShopIconColor } from "./MapData";
+import {
+  DefaultColor,
+  MarkersDetail,
+  ShopIconColor,
+  DriverDetail,
+  Setting,
+  CatalogValue,
+} from "./MapData";
 import { renderToStaticMarkup } from "react-dom/server";
 import Header from "./Header/Header";
 import RouteDetails from "./RouteDetails/RouteDetails";
@@ -32,6 +40,9 @@ import BottomLeft from "./Controller/BottomLeft";
 import { Storage } from "./Storage/Storage";
 import Icon1 from "./Icon/Icon";
 import MarkerShopPopup from "./Popup/MarkerShopPopup";
+import { DriverType } from "./DriverType";
+
+const Leaflet = require("leaflet");
 
 const theme = createTheme({
   typography: {
@@ -50,10 +61,11 @@ function App() {
     MarkersDetail[0].Longitude,
   ];
   const [allMarkers, setAllMarkers] = useState<MarkerType[]>(MarkersDetail);
+  const [allDrivers, setAllDrivers] = useState<DriverType[]>(DriverDetail);
+
   const [coordinates, setCoordinates] = useState<RouteCoordinate[]>([]);
   const [currentRouteIndex, setCurrentRouteIndex] = useState<number>(0);
   const [removedMarker, setRemovedMarker] = useState<number>();
-  const [routeDetail, setRouteDetail] = useState<RouteDetailType[]>([]);
   const [drawLasso, setDrawLasso] = useState<LassoController>("Disable");
   const [hideRoute, setHideRoute] = useState(false);
 
@@ -64,12 +76,15 @@ function App() {
   const [showDriver, setShowDriver] = useState(false);
 
   // setting state
-  const [timeDistance, setTimeDistance] = useState<number>();
-  const [fixedWorkingHours, setFixedWorkingHours] = useState<number>();
-  const [vanVolume, setVanVolume] = useState<number>();
-  const [isuzuVolume, setIsuzuVolume] = useState<number>();
-  const [isHeavy, setIsHeavy] = useState<boolean>();
-  const [saveToLocal, setSaveToLocal] = useState<boolean>();
+  const [timeDistance, setTimeDistance] = useState<number>(2);
+  const [carTypes, setCarTypes] = useState<CarType[]>(Setting.carTypes);
+  const [catalogValues, setCatalogValues] =
+    useState<CatalogType[]>(CatalogValue);
+  const [fixedWorkingHours, setFixedWorkingHours] = useState<number>(540);
+  const [vanVolume, setVanVolume] = useState<number>(6);
+  const [isuzuVolume, setIsuzuVolume] = useState<number>(9);
+  const [isHeavy, setIsHeavy] = useState<boolean>(false);
+  const [saveToLocal, setSaveToLocal] = useState<boolean>(true);
 
   useEffect(() => {
     const _Settings: SettingsType = JSON.parse(
@@ -101,7 +116,7 @@ function App() {
 
   useEffect(() => {
     setFlying(undefined);
-    // console.log(coordinates);
+    console.log(coordinates);
     Storage.setLocal("LS_Route", JSON.stringify(coordinates));
   }, [coordinates]);
 
@@ -113,9 +128,9 @@ function App() {
     if (shops.length > 0) return;
     const _Shops: MarkerType[] = [];
 
-    MarkersDetail.map((marker) => {
+    MarkersDetail.forEach((marker) => {
       if (marker.Shops) {
-        marker.Shops.map((_m) => {
+        marker.Shops.forEach((_m) => {
           _Shops.push({
             CustomerID: _m.ShopCode,
             CustomerName: _m.ShopName,
@@ -146,11 +161,31 @@ function App() {
         let _route = object.Route.filter(
           (el) => el.Latitude !== lat && el.Longitude !== lng
         );
-        if (_route.length < coordinates[index].Route.length)
+        if (_route.length < coordinates[index].Route.length) {
           setRemovedMarker(index);
-        object.Route = [..._route];
+
+          const lk = _route.map((_r, indx) => {
+            let Distance = 0;
+            if (indx > 0) {
+              let fromLatLng = Leaflet.latLng({
+                lat: _r.Latitude,
+                lng: _r.Longitude,
+              });
+              let toLatLng = Leaflet.latLng({
+                lat: _route[indx - 1].Latitude,
+                lng: _route[indx - 1].Longitude,
+              });
+
+              Distance = fromLatLng.distanceTo(toLatLng);
+            }
+            return { ..._r, Distance };
+          });
+
+          object.Route = [...lk];
+        } else object.Route = [..._route];
         return object;
       });
+
       setCoordinates(result);
     },
     [coordinates, setCoordinates, setRemovedMarker, setFlying]
@@ -180,7 +215,7 @@ function App() {
               const tmp = { ..._route };
 
               if (_Marker?.Shops) {
-                _Marker?.Shops.map((_mrk) => {
+                _Marker?.Shops.forEach((_mrk) => {
                   let __mrk = _route.Route.find(
                     (el) =>
                       el.Latitude === _mrk.Latitude &&
@@ -193,12 +228,40 @@ function App() {
                         el.Latitude === _mrk.Latitude &&
                         el.Longitude === _mrk.Longitude
                     );
-                    if (_MarkerShops) tmp.Route.push(_MarkerShops);
+                    if (_MarkerShops) {
+                      let Distance = 0;
+                      if (tmp.Route.length > 0) {
+                        let fromLatLng = Leaflet.latLng({
+                          lat: _MarkerShops.Latitude,
+                          lng: _MarkerShops.Longitude,
+                        });
+                        let toLatLng = Leaflet.latLng({
+                          lat: tmp.Route[tmp.Route.length - 1].Latitude,
+                          lng: tmp.Route[tmp.Route.length - 1].Longitude,
+                        });
+                        console.log(toLatLng, fromLatLng);
+                        Distance = fromLatLng.distanceTo(toLatLng);
+                      }
+                      tmp.Route.push({ ..._MarkerShops, Distance });
+                    }
                   }
                 });
               }
 
-              tmp.Route.push(_m);
+              let Distance = 0;
+              if (tmp.Route.length > 0) {
+                let fromLatLng = Leaflet.latLng({
+                  lat: _m.Latitude,
+                  lng: _m.Longitude,
+                });
+                let toLatLng = Leaflet.latLng({
+                  lat: tmp.Route[tmp.Route.length - 1].Latitude,
+                  lng: tmp.Route[tmp.Route.length - 1].Longitude,
+                });
+
+                Distance = fromLatLng.distanceTo(toLatLng);
+              }
+              tmp.Route.push({ ..._m, Distance });
               return tmp;
             } else return _route;
           });
@@ -213,26 +276,6 @@ function App() {
   const NewRoute = useCallback(() => {
     setCurrentRouteIndex(coordinates.length);
   }, [coordinates, setCurrentRouteIndex]);
-
-  const UpdateRouteDetail = useCallback(
-    (index: number, Distance: string, Time: string) => {
-      const _routeDetail: RouteDetailType[] = routeDetail
-        ? [...routeDetail]
-        : [];
-      let _exist = _routeDetail.findIndex((el) => el.index === index);
-      if (_exist < 0) {
-        _routeDetail.push({
-          index,
-          Distance,
-          Time,
-        });
-      } else {
-        _routeDetail[_exist] = { index, Distance, Time };
-      }
-      setRouteDetail(_routeDetail);
-    },
-    [routeDetail, setRouteDetail]
-  );
 
   const DrawLasso = useCallback(
     (Action: LassoController) => {
@@ -258,7 +301,6 @@ function App() {
     coordinates,
     currentRouteIndex,
     hideRoute,
-    routeDetail,
     flying,
     timeDistance,
     fixedWorkingHours,
@@ -267,6 +309,14 @@ function App() {
     isHeavy,
     saveToLocal,
     shops,
+    showDriver,
+    allDrivers,
+    carTypes,
+    catalogValues,
+    setCatalogValues,
+    setCarTypes,
+    setAllDrivers,
+    setShowDriver,
     setTimeDistance,
     setFixedWorkingHours,
     setVanVolume,
@@ -305,9 +355,6 @@ function App() {
         Shadow =
           flying.lat === _marker.Latitude && flying.lng === _marker.Longitude;
 
-      console.log(flying);
-      if (Shadow) console.log(_marker);
-
       return (
         <Icon1
           type={_marker.MarkerID}
@@ -337,7 +384,6 @@ function App() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Routing
-            UpdateRouteDetail={UpdateRouteDetail}
             setCurrentRouteIndex={setCurrentRouteIndex}
             ondblclickMarker={ondblclickMarker}
             removedMarker={removedMarker}
@@ -415,10 +461,7 @@ function App() {
 
           <Control position="topleft">
             <Stack style={{ width: "100vw" }}>
-              <RouteDetails
-                Points={coordinates[currentRouteIndex]}
-                Detail={routeDetail[currentRouteIndex]}
-              />
+              <RouteDetails Points={coordinates[currentRouteIndex]} />
             </Stack>
           </Control>
         </MapContainer>
