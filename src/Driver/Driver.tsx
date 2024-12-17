@@ -93,7 +93,7 @@ function AllDrivers({
     (str: string) => {
       const result: DriverType[] = [];
       SetSearchValue(str);
-      allDrivers.map((_driver) => {
+      allDrivers.forEach((_driver) => {
         if (_driver.DriverName.includes(str)) result.push(_driver);
       });
       SetDrivers(result);

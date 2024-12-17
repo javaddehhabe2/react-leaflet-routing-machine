@@ -19,14 +19,10 @@ export default function SettingModal({
   const {
     timeDistance,
     fixedWorkingHours,
-    vanVolume,
-    isuzuVolume,
     saveToLocal,
     carTypes,
     setTimeDistance,
     setFixedWorkingHours,
-    setVanVolume,
-    setIsuzuVolume,
     setSaveToLocal,
   } = useAppContext();
 
@@ -36,8 +32,6 @@ export default function SettingModal({
       const _setting: SettingsType = {
         TimeDistance: timeDistance ?? 0,
         FixedWorkingHours: fixedWorkingHours ?? 0,
-        VanVolume: vanVolume ?? 0,
-        IsuzuVolume: isuzuVolume ?? 0,
         SaveToLocal: saveToLocal ?? false,
         carTypes: carTypes,
       };
@@ -48,8 +42,6 @@ export default function SettingModal({
     handleClose,
     timeDistance,
     fixedWorkingHours,
-    vanVolume,
-    isuzuVolume,
     saveToLocal,
     carTypes,
   ]);
@@ -135,30 +127,6 @@ export default function SettingModal({
                       }
                     />
                     <span>دقیقه در روز</span>
-                  </div>
-                  <div className="setting-item">
-                    <label>حجم ماشین سبک</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={vanVolume}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setVanVolume(Number(e.currentTarget.value))
-                      }
-                    />
-                    <span>متر مکعب</span>
-                  </div>
-                  <div className="setting-item">
-                    <label>حجم ماشین سنگین</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={isuzuVolume}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setIsuzuVolume(Number(e.currentTarget.value))
-                      }
-                    />
-                    <span>متر مکعب</span>
                   </div>
                   <div className="setting-item">
                     <label>ذخیره در لوکال</label>

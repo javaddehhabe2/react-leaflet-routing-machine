@@ -17,8 +17,6 @@ const initialValue = {
   flying: undefined,
   timeDistance: 0,
   fixedWorkingHours: 0,
-  vanVolume: 0,
-  isuzuVolume: 0,
   isHeavy: false,
   saveToLocal: false,
   shops: [],
@@ -32,8 +30,6 @@ const initialValue = {
   setShowDriver: () => {},
   setTimeDistance: () => {},
   setFixedWorkingHours: () => {},
-  setVanVolume: () => {},
-  setIsuzuVolume: () => {},
   setIsHeavy: () => {},
   setSaveToLocal: () => {},
   setFlying: () => {},
@@ -51,8 +47,6 @@ export interface AppContextType {
   flying: LatLngLiteral | undefined;
   timeDistance: number;
   fixedWorkingHours: number;
-  vanVolume: number;
-  isuzuVolume: number;
   isHeavy: boolean;
   saveToLocal: boolean;
   shops: Marker[];
@@ -66,8 +60,6 @@ export interface AppContextType {
   setShowDriver: Dispatch<SetStateAction<boolean>>;
   setTimeDistance: Dispatch<SetStateAction<number>>;
   setFixedWorkingHours: Dispatch<SetStateAction<number>>;
-  setVanVolume: Dispatch<SetStateAction<number>>;
-  setIsuzuVolume: Dispatch<SetStateAction<number>>;
   setIsHeavy: Dispatch<SetStateAction<boolean>>;
   setSaveToLocal: Dispatch<SetStateAction<boolean>>;
 

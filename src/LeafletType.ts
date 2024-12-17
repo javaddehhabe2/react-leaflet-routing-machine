@@ -23,8 +23,6 @@ export interface RouteDetailsLS {
 export interface SettingsType {
   TimeDistance: number;
   FixedWorkingHours: number;
-  VanVolume: number;
-  IsuzuVolume: number;
   IsHeavy?: boolean;
   SaveToLocal: boolean;
   carTypes: CarType[];

@@ -29,7 +29,7 @@ export default function CustomizedTimeline({ Points }: CustomizedTimeLineType) {
             <div className="flex  flex-1 ">
               <div className="flex w-full justify-around">
                 <span className="text-gray-700 text-xxs font-bold">
-                  {GetDistance(point?.Distance ? point.Distance : 0)} KM
+                  {GetDistance(point?.Distance ? point.Distance : 0).toFixed(2)} KM
                 </span>
                 <div className="w-[1px] bg-gray-300 mx-1"></div>
                 <span className="text-gray-700 text-xxs font-bold">

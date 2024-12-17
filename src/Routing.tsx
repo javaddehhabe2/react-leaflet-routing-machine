@@ -3,7 +3,7 @@ import "leaflet-routing-machine-custom";
 import { type LassoControl } from "leaflet-lasso";
 import { useMap } from "react-leaflet";
 import { RoutingType, LassoController } from "./LeafletType";
-import { Color, DefaultColor } from "./MapData";
+import { RouteColor, DefaultColor } from "./MapData";
 import { Marker } from "./MarkerType";
 import { useAppContext } from "./context/AppContext";
 
@@ -207,7 +207,7 @@ export default function Routing({
     const tmp_item = [...routes];
 
     coordinates.forEach((route, index) => {
-      const _routeColor = Color[index] ? Color[index] : DefaultColor;
+      const _routeColor = RouteColor[index] ? RouteColor[index] : DefaultColor;
       const _tmp = route.Route.forEach((object) =>
         Leaflet.latLng(object.Latitude, object.Longitude)
       );

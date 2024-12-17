@@ -32,6 +32,8 @@ module.exports = {
         drivericonlight: "#F6EBF3",
         drivericonlightcolor: "#8A006C",
         drivericonlightborder: "#8a006c59",
+        sliderbar:"#F2F2F2",
+        timelineHeader:"#00000080"
       },
     },
   },

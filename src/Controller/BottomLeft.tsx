@@ -4,11 +4,11 @@ import { GetDistance, GetTime } from "../Utility";
 export default function BottomLeft() {
   const { coordinates, allMarkers, timeDistance } = useAppContext();
   const [htmlOrder, setHtmlOrder] = useState(`0 از ${allMarkers.length}`);
-  const [distanceInKilometers, setDistanceInKilometers] = useState(`0`);
+  const [distanceInKilometers, setDistanceInKilometers] = useState(0);
   const [timeInsight, setTimeInsight] = useState(`00:00`);
   useEffect(() => {
     let selectedMarker = 0;
-    coordinates.map((route) => {
+    coordinates.forEach((route) => {
       selectedMarker += route.Route.length;
     });
     setHtmlOrder(`${selectedMarker} از ${allMarkers.length}`);
@@ -35,7 +35,7 @@ export default function BottomLeft() {
       </div>
       <div className="flex mb-2 gap-2 justify-between p-1 text-[14px] font-medium text-black border-b-[1px] border-b-gray-300">
         <span className="text-gray-600">کیلومتر</span>
-        <span>{distanceInKilometers}</span>
+        <span>{distanceInKilometers.toFixed(2)}</span>
       </div>
       <div className="flex mb-2 gap-2 justify-between p-1 text-[14px] font-medium text-black border-b-[1px] border-b-gray-300">
         <span className="text-gray-600">ساعت</span>

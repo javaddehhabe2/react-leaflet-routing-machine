@@ -14,7 +14,7 @@ export default function SearchInput() {
       return;
     }
     const result: Marker[] = [];
-    allMarkers.map((_marker) => {
+    allMarkers.forEach((_marker) => {
       if (_marker.CustomerName.includes(searchValue)) result.push(_marker);
     });
     setSearchResult(result);

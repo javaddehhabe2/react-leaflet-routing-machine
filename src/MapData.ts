@@ -3,7 +3,7 @@ import { CatalogType, SettingsType } from "./LeafletType";
 import { Marker } from "./MarkerType";
 export const DefaultColor = "#38f";
 export const ShopIconColor = "#8e44ad";
-export const Color = [
+export const RouteColor = [
   "red",
   "aqua",
   "fuchsia",
@@ -18,12 +18,21 @@ export const Color = [
   "teal",
   "yellow",
 ];
-
+export const ColorList = [
+  "#FF0000", "#FF4500", "#FF6347", "#FF1493", "#FF69B4", "#FF00FF", "#FF8C00",
+  "#FFA500", "#FFFF00", "#FFD700", "#7FFF00", "#00FF00", "#32CD32",
+  "#00FF7F", "#00FA9A", "#00FFFF", "#40E0D0", "#00BFFF", "#1E90FF", "#0000FF", "#4B0082",
+  "#8A2BE2", "#9932CC", "#9400D3", "#BA55D3", "#EE82EE", "#DA70D6", "#D2691E", "#FF7F50",
+  "#FFA07A", "#DC143C", "#B22222", "#A52A2A", "#8B0000", "#8B008B", "#800080",
+  "#9370DB", "#7B68EE", "#6A5ACD", "#483D8B", "#4169E1", "#4682B4", "#5F9EA0", "#00CED1",
+  "#48D1CC", "#20B2AA", "#3CB371", "#2E8B57", "#006400", "#556B2F", "#B0E0E6", "#98FB98",
+  "#808000", "#6B8E23", "#BDB76B", "#F0E68C", "#DDA0DD", "#6495ED",
+  "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FF4500", "#B0C4DE", "#A020F0", "#FA8072",
+  "#CD5C5C", "#DAA520", "#B8860B", "#7CFC00",
+];
 export const Setting: SettingsType = {
   TimeDistance: 2,
   FixedWorkingHours: 540,
-  VanVolume: 6,
-  IsuzuVolume: 9,
   IsHeavy: true,
   SaveToLocal: true,
   carTypes: [

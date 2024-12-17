@@ -31,7 +31,7 @@ import {
 } from "./MapData";
 import { renderToStaticMarkup } from "react-dom/server";
 import Header from "./Header/Header";
-import RouteDetails from "./RouteDetails/RouteDetails";
+// import RouteDetails from "./RouteDetails/RouteDetails";
 
 import { AppContextType, AppContextProvider } from "./context/AppContext";
 import MarkerPopup from "./Popup/MarkerPopup";
@@ -41,6 +41,7 @@ import { Storage } from "./Storage/Storage";
 import Icon1 from "./Icon/Icon";
 import MarkerShopPopup from "./Popup/MarkerShopPopup";
 import { DriverType } from "./DriverType";
+import RouteDetails from "./RouteDetails/RouteDetails";
 
 const Leaflet = require("leaflet");
 
@@ -81,8 +82,6 @@ function App() {
   const [catalogValues, setCatalogValues] =
     useState<CatalogType[]>(CatalogValue);
   const [fixedWorkingHours, setFixedWorkingHours] = useState<number>(540);
-  const [vanVolume, setVanVolume] = useState<number>(6);
-  const [isuzuVolume, setIsuzuVolume] = useState<number>(9);
   const [isHeavy, setIsHeavy] = useState<boolean>(false);
   const [saveToLocal, setSaveToLocal] = useState<boolean>(true);
 
@@ -93,8 +92,6 @@ function App() {
     if (_Settings) {
       setTimeDistance(_Settings.TimeDistance);
       setFixedWorkingHours(_Settings.FixedWorkingHours);
-      setIsuzuVolume(_Settings.IsuzuVolume);
-      setVanVolume(_Settings.VanVolume);
       setSaveToLocal(_Settings.SaveToLocal);
     }
 
@@ -116,7 +113,6 @@ function App() {
 
   useEffect(() => {
     setFlying(undefined);
-    console.log(coordinates);
     Storage.setLocal("LS_Route", JSON.stringify(coordinates));
   }, [coordinates]);
 
@@ -270,7 +266,7 @@ function App() {
         }
       }
     },
-    [coordinates, currentRouteIndex, setCoordinates, allMarkers, setFlying]
+    [coordinates, currentRouteIndex, setCoordinates, allMarkers, setFlying,shops]
   );
 
   const NewRoute = useCallback(() => {
@@ -304,8 +300,6 @@ function App() {
     flying,
     timeDistance,
     fixedWorkingHours,
-    vanVolume,
-    isuzuVolume,
     isHeavy,
     saveToLocal,
     shops,
@@ -319,8 +313,6 @@ function App() {
     setShowDriver,
     setTimeDistance,
     setFixedWorkingHours,
-    setVanVolume,
-    setIsuzuVolume,
     setIsHeavy,
     setSaveToLocal,
     setFlying,
@@ -461,7 +453,7 @@ function App() {
 
           <Control position="topleft">
             <Stack style={{ width: "100vw" }}>
-              <RouteDetails Points={coordinates[currentRouteIndex]} />
+            <RouteDetails Points={coordinates[currentRouteIndex]} />
             </Stack>
           </Control>
         </MapContainer>

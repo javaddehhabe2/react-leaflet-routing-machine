@@ -1,5 +1,5 @@
 export const GetDistance = (distance: number) =>
-  (distance / 1000).toFixed(2).toString();
+  (distance / 1000);
 
 export const GetTime = (Distance: number, timeDistance: number = 2) => {
   const _time = (Distance / 1000) * timeDistance * 60;

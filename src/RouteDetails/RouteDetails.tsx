@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Card, CardContent, Typography, Divider, Button } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { Card, CardContent, Divider, Button } from "@mui/material";
 
 import { RouteDetailsType } from "./Type/RouteDetailsType";
 import AddIcon from "@mui/icons-material/Add";
@@ -8,11 +8,18 @@ import { useAppContext } from "../context/AppContext";
 import { PiTruckTrailerBold } from "react-icons/pi";
 import { GetDistance, GetTime } from "../Utility";
 import Driver from "../Driver/Driver";
+import TimeLineBar from "./TimeLineBar";
 
 export default function RouteDetails({ Points }: RouteDetailsType) {
-  const { NewRoute, coordinates, currentRouteIndex,  showDriver, timeDistance } =
-    useAppContext();
-  const [distanceInKilometers, setDistanceInKilometers] = useState(`0`);
+  const {
+    NewRoute,
+    coordinates,
+    currentRouteIndex,
+    showDriver,
+    timeDistance,
+    fixedWorkingHours,
+  } = useAppContext();
+  const [distanceInKilometers, setDistanceInKilometers] = useState(0);
   const [timeInsight, setTimeInsight] = useState(`00:00:00`);
   const [productCount, setProductCount] = useState(0);
   const [unloadingCount, setUnloadingCount] = useState(0);
@@ -24,7 +31,7 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
     ) {
       setProductCount(coordinates[currentRouteIndex].Route.length);
       let _count = 0;
-      coordinates[currentRouteIndex].Route.map((_route) => {
+      coordinates[currentRouteIndex].Route.forEach((_route) => {
         _count += _route.Products ? _route.Products.length : 0;
       });
       setProductCount(_count);
@@ -32,19 +39,26 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
       setUnloadingCount(coordinates[currentRouteIndex].Route.length);
 
       let Distance = 0;
-        coordinates[currentRouteIndex].Route.map((_r) => (Distance += _r?.Distance ? _r?.Distance : 0));
+      coordinates[currentRouteIndex].Route.forEach(
+        (_r) => (Distance += _r?.Distance ? _r?.Distance : 0)
+      );
 
-  
       setDistanceInKilometers(GetDistance(Distance));
       setTimeInsight(GetTime(Distance, timeDistance));
-
     } else {
       setProductCount(0);
       setUnloadingCount(0);
       setDistanceInKilometers(GetDistance(0));
       setTimeInsight(GetTime(0, timeDistance));
     }
-  }, [coordinates, currentRouteIndex,timeDistance]);
+  }, [coordinates, currentRouteIndex, timeDistance]);
+
+  const EstimationOfDeliveryPercent = useCallback(() => {
+    return (
+      ((distanceInKilometers * timeDistance) / (fixedWorkingHours * 60)) *
+      100
+    ).toFixed(2); // ظرفیت زمانی
+  }, [timeDistance, fixedWorkingHours, distanceInKilometers]);
   return (
     <Card
       sx={{ width: "320px", height: "100vh" }}
@@ -108,7 +122,7 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
             <div className="flex  flex-1 items-end">
               <div className="flex w-full justify-around">
                 <span className="text-gray-700 text-sm font-bold" dir={"ltr"}>
-                  {`${distanceInKilometers} KM`}
+                  {`${distanceInKilometers.toFixed(2)} KM`}
                 </span>
                 <div className="w-[1px] bg-gray-300  mx-1 "></div>
                 <span className="text-gray-700 text-sm font-bold">
@@ -117,7 +131,7 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
               </div>
             </div>
           </div>
-          <div></div>
+          <TimeLineBar />
         </div>
         <Divider />
         <div className="flex my-4 flex-col">
@@ -145,7 +159,9 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
               <span className="text-gray-500 text-sm font-normal">
                 ظرفیت زمانی :
               </span>
-              <span className="text-gray-700 text-sm font-bold">38.4%</span>
+              <span className="text-gray-700 text-sm font-bold">
+                {EstimationOfDeliveryPercent()}%
+              </span>
             </div>
             <div className="flex flex-1">
               <span className="text-gray-500 text-sm font-normal">
@@ -161,13 +177,13 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
             <CustomizedTimeLine Points={Points} />
           ) : (
             <div className="flex flex-col justify-center items-center mt-8">
-              {" "}
+             
               <div>
-                <PiTruckTrailerBold size={40} />{" "}
-              </div>{" "}
+                <PiTruckTrailerBold size={40} />
+              </div>
               <p className="text-md text-gray-700 font-bold">
-                هنوز مسیری ایجاد نشده{" "}
-              </p>{" "}
+                هنوز مسیری ایجاد نشده
+              </p>
             </div>
           )}
         </div>
