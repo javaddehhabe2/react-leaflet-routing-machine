@@ -208,7 +208,7 @@ export default function Routing({
 
     coordinates.forEach((route, index) => {
       const _routeColor = RouteColor[index] ? RouteColor[index] : DefaultColor;
-      const _tmp = route.Route.forEach((object) =>
+      const _tmp = route.Route.map((object) =>
         Leaflet.latLng(object.Latitude, object.Longitude)
       );
 
