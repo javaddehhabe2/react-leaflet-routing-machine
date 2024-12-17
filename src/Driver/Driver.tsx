@@ -15,7 +15,7 @@ export default function Driver() {
               onClick={() => {
                 setShowMenu((prev) => !prev);
               }}
-              className="flex items-center p-[10px] border border-modalside rounded bg-white m-[5px] cursor-pointer relative justify-between"
+              className="flex items-center p-[10px] border border-modalside border-solid rounded bg-white m-[5px] cursor-pointer relative justify-between"
             >
               <div className="flex items-center gap-[10px]">
                 <i className="fi fi-rr-driver-man profile-image"></i>
@@ -31,8 +31,8 @@ export default function Driver() {
                   <p className="m-0 text-gray-400 flex items-center gap-[5px] pt-[5px] text-sm">
                     {selectedDriver.Cars?.map((_car,_index) => (
                       <Fragment   key={`driver__${_index}`}>
-                        <span className="flex flex-row border border-togglecolor rounded items-center text-textcolor text-xs">
-                          <span className="border-l border-l-togglecolor p-[5px] text-textcolor text-xs">
+                        <span className="flex flex-row border border-togglecolor border-solid rounded items-center text-textcolor text-xs">
+                          <span className="border-l border-l-togglecolor border-solid p-[5px] text-textcolor text-xs">
                             {_car.PlaqueNumberFourth}
                           </span>
                           <span className="p-[5px] text-textcolor text-xs">
@@ -61,7 +61,7 @@ export default function Driver() {
       ) : (
         <div className="bg-white block">
           <div className="notDriverSelect" onClick={() => setShowMenu(true)}>
-            <span className="font-bold text-lg">انتخاب راننده</span>
+            <span >انتخاب راننده</span>
             <i className="fi fi-rr-angle-small-left font-bold text-lg"></i>
           </div>
         </div>
@@ -106,7 +106,7 @@ function AllDrivers({
         <div className="flex items-center mb-3">
           <input
             type="search"
-            className="w-full p-2 m-2 border border-modalside rounded pr-7"
+            className="w-full p-2 m-2 border border-modalside border-solid rounded pr-7"
             placeholder="جستجو..."
             value={searchValue}
             onChange={(e) => {
@@ -132,7 +132,7 @@ function AllDrivers({
                   setShowMenu(false);
                 }}
                 key={`driver_${ind}`}
-                className="flex items-center p-[10px] border border-modalside rounded bg-white m-[5px] cursor-pointer relative"
+                className="flex items-center p-[10px] border border-modalside border-solid rounded bg-white m-[5px] cursor-pointer relative"
               >
                 <div className="flex items-center gap-[10px]">
                   <i className="fi fi-rr-driver-man profile-image"></i>
@@ -145,8 +145,8 @@ function AllDrivers({
                     <p className="m-0 text-gray-400 flex items-center gap-[5px] pt-[5px] text-sm">
                       {_driver.Cars?.map((_car, indx) => (
                         <Fragment key={`car_${indx}_${ind}`}>
-                          <span className="flex flex-row border border-togglecolor rounded items-center text-textcolor text-xs">
-                            <span className="border-l border-l-togglecolor p-[5px] text-textcolor text-xs">
+                          <span className="flex flex-row border border-togglecolor border-solid rounded items-center text-textcolor text-xs">
+                            <span className="border-l border-l-togglecolor border-solid p-[5px] text-textcolor text-xs">
                               {_car.PlaqueNumberFourth}
                             </span>
                             <span className="p-[5px] text-textcolor text-xs">

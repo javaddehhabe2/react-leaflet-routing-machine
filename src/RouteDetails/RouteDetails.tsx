@@ -60,13 +60,9 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
     ).toFixed(2); // ظرفیت زمانی
   }, [timeDistance, fixedWorkingHours, distanceInKilometers]);
   return (
-    <Card
-      sx={{ width: "320px", height: "100vh" }}
-      className="font-display absolute z-10"
-    >
+    <div className="font-display absolute z-10 w-[320px] h-[100vh] bg-white text-sm font-medium flex flex-col">
       <div
-        className="flex rounded mb-5 h-16 bg-primarycolor text-white justify-between p-4"
-        style={{ boxShadow: "0 2px 5px rgba(0, 0, 0, 0.1)" }}
+        className="flex mb-4 h-16 bg-primarycolor text-white justify-between p-4"
       >
         <div className="text-base font-bold flex items-center gap-[6px]">
           <div className="flex items-center">
@@ -81,8 +77,8 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
           </div>
         </div>
         <div>
-          <div className="flex items-center gap-2 flex-row-reverse bg-white text-setting p-2 rounded text-xs font-bold">
-            <i className="fi fi-rr-check text-sm"></i>
+          <div className="flex items-center gap-2 flex-row-reverse bg-white text-setting p-1 rounded text-xs font-bold">
+            <i className="fi fi-rr-check text-sm flex items-center"></i>
             <span> برنامه ریزی شده</span>
           </div>
           {/* <div className="route-status not-planned" style="display: flex;">
@@ -94,131 +90,146 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
         </div>
       </div>
 
-      <Divider />
-      <CardContent>
+      <div className="flex flex-col px-3">
         {showDriver ? (
           <Driver />
         ) : (
+          <div className="text-[16px] gap-[13px] flex  w-full h-10 bg-setting text-white items-center cursor-pointer rounded justify-center bg-center "  onClick={NewRoute}>
+            <i className="fi fi-rr-plus flex items-center"></i>
+            <span>جدید</span>
+        </div>
+        
+        )}
+      </div>
+
+      <div className="flex flex-col py-2 px-3 mt-3 border-y border-y-togglecolor border-solid">
+        <div className="flex flex-row align-baseline">
+          <div className="flex  flex-1 ">
+            <span className="text-gray-700 text-sm font-bold">جدول زمانی</span>
+          </div>
+          <div className="flex  flex-1 items-end">
+            <div className="flex w-full justify-around">
+              <span className="text-gray-700 text-sm font-bold" dir={"ltr"}>
+                {`${distanceInKilometers.toFixed(2)} KM`}
+              </span>
+              <div className="w-[1px] bg-gray-300  mx-1 "></div>
+              <span className="text-gray-700 text-sm font-bold">
+                {timeInsight}
+              </span>
+            </div>
+          </div>
+        </div>
+        <TimeLineBar />
+      </div>
+
+      <div className="flex p-3 flex-col border-b border-b-togglecolor border-solid">
+        <div className="flex  w-full my-1">
+          <div className="flex flex-1 items-center">
+            <span className="text-gray-500">
+              تعداد کالا:
+            </span>
+            <span className="text-gray-700 ">
+              {productCount} عدد
+            </span>
+          </div>
+          <div className="flex flex-1">
+            <span className="text-gray-500">
+              تعداد تخلیه:
+            </span>
+            <span className="text-gray-700">
+              {unloadingCount} مرتبه
+            </span>
+          </div>
+        </div>
+        <div className="flex w-full  my-1 ">
+          <div className="flex flex-1 items-center">
+            <span className="text-gray-500">
+              ظرفیت زمانی :
+            </span>
+            <span className="text-gray-700 ">
+              {EstimationOfDeliveryPercent()}%
+            </span>
+          </div>
+          <div className="flex flex-1">
+            <span className="text-gray-500">
+              ظرفیت حجمی:
+            </span>
+            <span className="text-gray-700">46.5%</span>
+          </div>
+        </div>
+      </div>
+
+      <div className=" mr-3 overflow-y-auto h-full max-h-full flex-1 ">
+        {Points && Points.Route.length > 0 ? (
+          <CustomizedTimeLine Points={Points} />
+        ) : (
+          <div className="flex flex-col justify-center items-center mt-8">
+            <div>
+              <PiTruckTrailerBold size={40} />
+            </div>
+            <p className="text-md text-gray-700 font-bold">
+              هنوز مسیری ایجاد نشده
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* <div className="flex flex-row my-2 justify-around sticky bottom-1 bg-white">
+        <div className="flex">
+          <label
+            htmlFor="Toggle3"
+            className="inline-flex items-center p-2 my-2 rounded-md cursor-pointer"
+          >
+            <input id="Toggle3" type="checkbox" className="hidden peer" />
+            <span className="px-4 py-2 rounded-r-md bg-violet-600 text-gray-200">
+              سنگین
+            </span>
+            <span className="px-4 py-2 rounded-l-md bg-gray-200 text-gray-700">
+              سبک
+            </span>
+          </label>
+        </div>
+        <div className="flex">
           <Button
             variant="contained"
             size="small"
-            startIcon={<AddIcon className="ml-1" />}
-            style={{ marginBottom: "1em", alignItems: "end" }}
-            className="w-full text-sm !bg-setting !text-white"
-            onClick={NewRoute}
+            style={{
+              marginTop: "1.5em",
+              marginBottom: "1.5em",
+              backgroundColor: "rgb(107 114 128)",
+            }}
+            className="w-full text-sm "
           >
-            جدید
+            ثبت مسیر
           </Button>
-        )}
+        </div>
+      </div> */}
 
-        <Divider />
-        <div className="flex flex-col py-4">
-          <div className="flex flex-row align-baseline">
-            <div className="flex  flex-1 ">
-              <span className="text-gray-700 text-sm font-bold">
-                جدول زمانی
-              </span>
-            </div>
-            <div className="flex  flex-1 items-end">
-              <div className="flex w-full justify-around">
-                <span className="text-gray-700 text-sm font-bold" dir={"ltr"}>
-                  {`${distanceInKilometers.toFixed(2)} KM`}
-                </span>
-                <div className="w-[1px] bg-gray-300  mx-1 "></div>
-                <span className="text-gray-700 text-sm font-bold">
-                  {timeInsight}
-                </span>
+
+      <div className="flex p-4 items-center bg-white m-0 border-y border-y-togglecolor border-solid">
+
+        <div className="text-sm flex flex-row justify-between flex-1 items-center">
+            <div>
+                
+                <div className="flex bg-gray-200 p-2 rounded w-40 justify-between items-center border border-togglecolor">
+                    <div className="flex flex-row-reverse cursor-pointer bg-indigo-500 p-2 rounded text-white w-24 justify-center gap-[12px]">
+                    <i className="fi fi-rr-truck-moving"></i>
+                    <span>سنگین</span>
+                    </div>
+                    <div className="flex flex-row-reverse cursor-pointer gap-[3px]">
+                <i className="fi fi-rr-truck-pickup hidden"></i>
+                <span>سبک</span>
               </div>
+                </div>
             </div>
-          </div>
-          <TimeLineBar />
+            <span className="cursor-pointer bg-gray-500 text-white rounded-sm text-base font-medium w-24 h-10 text-center flex justify-center items-center">
+            ثبت مسیر
+          </span>
         </div>
-        <Divider />
-        <div className="flex my-4 flex-col">
-          <div className="flex  w-full my-1">
-            <div className="flex flex-1 items-center">
-              <span className="text-gray-500 text-sm font-normal">
-                تعداد کالا:
-              </span>
-              <span className="text-gray-700 text-sm font-bold">
-                {productCount} عدد
-              </span>
-            </div>
-            <div className="flex flex-1">
-              <span className="text-gray-500 text-sm font-normal">
-                تعداد تخلیه:
-              </span>
-              <span className="text-gray-700 text-sm font-bold">
-                {" "}
-                {unloadingCount} مرتبه
-              </span>
-            </div>
-          </div>
-          <div className="flex w-full  my-1 ">
-            <div className="flex flex-1 items-center">
-              <span className="text-gray-500 text-sm font-normal">
-                ظرفیت زمانی :
-              </span>
-              <span className="text-gray-700 text-sm font-bold">
-                {EstimationOfDeliveryPercent()}%
-              </span>
-            </div>
-            <div className="flex flex-1">
-              <span className="text-gray-500 text-sm font-normal">
-                ظرفیت حجمی:
-              </span>
-              <span className="text-gray-700 text-sm font-bold">46.5%</span>
-            </div>
-          </div>
-        </div>
-        <Divider />
-        <div className="overflow-y-auto w-full h-[60vh] no-scrollbar">
-          {Points && Points.Route.length > 0 ? (
-            <CustomizedTimeLine Points={Points} />
-          ) : (
-            <div className="flex flex-col justify-center items-center mt-8">
-             
-              <div>
-                <PiTruckTrailerBold size={40} />
-              </div>
-              <p className="text-md text-gray-700 font-bold">
-                هنوز مسیری ایجاد نشده
-              </p>
-            </div>
-          )}
-        </div>
-        <Divider />
-        <div className="flex flex-row my-2 justify-around sticky bottom-1 bg-white">
-          <div className="flex">
-            <label
-              htmlFor="Toggle3"
-              className="inline-flex items-center p-2 my-2 rounded-md cursor-pointer"
-            >
-              <input id="Toggle3" type="checkbox" className="hidden peer" />
-              <span className="px-4 py-2 rounded-r-md bg-violet-600 text-gray-200">
-                سنگین
-              </span>
-              <span className="px-4 py-2 rounded-l-md bg-gray-200 text-gray-700">
-                سبک
-              </span>
-            </label>
-          </div>
-          <div className="flex">
-            <Button
-              variant="contained"
-              size="small"
-              style={{
-                marginTop: "1.5em",
-                marginBottom: "1.5em",
-                backgroundColor: "rgb(107 114 128)",
-              }}
-              className="w-full text-sm "
-            >
-              ثبت مسیر
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    </div>
+
+
+
+    </div>
   );
 }

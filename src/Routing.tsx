@@ -247,6 +247,13 @@ export default function Routing({
             l.on("click", function (e: any) {
               RouteClicked(index);
             });
+            l.on('contextmenu',(e:any) => {
+              Leaflet.popup()
+              .setLatLng(e.latlng)
+              .setContent('<pre>Hello</pre>')
+              .addTo(map)
+              .openOn(map);
+            });
           });
           return line;
         },

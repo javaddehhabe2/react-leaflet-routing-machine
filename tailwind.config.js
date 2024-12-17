@@ -3,8 +3,8 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     fontFamily: {
-      body: ["IranYekan"],
-      display: ["IranYekan"],
+      body: ["BonyadeKoodak","IranYekan"],
+      display: ["BonyadeKoodak","IranYekan"],
     },
 
     extend: {

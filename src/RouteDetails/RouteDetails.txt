@@ -1,8 +1,10 @@
+
+
+
+
 import { useCallback, useEffect, useState } from "react";
-import { Card, CardContent, Divider, Button } from "@mui/material";
 
 import { RouteDetailsType } from "./Type/RouteDetailsType";
-import AddIcon from "@mui/icons-material/Add";
 import CustomizedTimeLine from "../TimeLine/CustomizedTimeLine";
 import { useAppContext } from "../context/AppContext";
 import { PiTruckTrailerBold } from "react-icons/pi";
@@ -59,6 +61,7 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
       100
     ).toFixed(2); // ظرفیت زمانی
   }, [timeDistance, fixedWorkingHours, distanceInKilometers]);
+
   return (
     <div className="w-[320px] relative h-full bg-sliderbar flex flex-col  text-black font-medium shadow z-10">
       <div className="h-16 rounded-none bg-primarycolor text-white flex justify-between shadow items-center p-4 m-0">
@@ -194,11 +197,9 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
           <span>جدول زمانی</span>
           <div className="flex flex-row-reverse gap-3">
             <span className="distance">
-              {" "}
               {`${distanceInKilometers.toFixed(2)} KM`}
             </span>
             <span className="border border-togglecolor pr-3">
-              {" "}
               {timeInsight}
             </span>
           </div>

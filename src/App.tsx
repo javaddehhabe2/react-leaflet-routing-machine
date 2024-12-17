@@ -47,7 +47,7 @@ const Leaflet = require("leaflet");
 
 const theme = createTheme({
   typography: {
-    fontFamily: "IranYekan",
+    fontFamily: "BonyadeKoodak",
     body2: {
       fontSize: "1rem",
       fontWeight: "bolder",
