@@ -3,7 +3,8 @@ import "leaflet-routing-machine-custom";
 import { type LassoControl } from "leaflet-lasso";
 import { useMap } from "react-leaflet";
 import { RoutingType, LassoController } from "./LeafletType";
-import { RouteColor, DefaultColor } from "./MapData";
+import { RouteColor,Color, DefaultColor } from "./MapData";
+
 import { Marker } from "./MarkerType";
 import { useAppContext } from "./context/AppContext";
 
@@ -15,7 +16,7 @@ import {
 } from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import MarkerPopup from "./Popup/MarkerPopup";
-import RoutePopup from "./Popup/RoutePopup";
+// import RoutePopup from "./Popup/RoutePopup";
 
 interface Layer1 extends Layer {
   _latlng?: LatLngLiteral;
@@ -215,7 +216,7 @@ export default function Routing({
     const tmp_item = [...routes];
 
     coordinates.forEach((_route, index) => {
-      const _routeColor = _route.RouteColor;
+      const _routeColor = Color[index] ? Color[index] : DefaultColor;// _route.RouteColor;
       const _tmp = _route.Route.map((object) =>
         Leaflet.latLng(object.Latitude, object.Longitude)
       );
@@ -255,20 +256,20 @@ export default function Routing({
             l.on("click", function (e: any) {
               RouteClicked(index);
             });
-            l.on("contextmenu", (e: any) => {
-              Leaflet.popup({ closeButton: false })
-                .setLatLng(e.latlng)
-                .setContent(renderToStaticMarkup(<RoutePopup route={_route} onChangeColor={onChangeColor} />))
+            // l.on("contextmenu", (e: any) => {
+            //   Leaflet.popup({ closeButton: false })
+            //     .setLatLng(e.latlng)
+            //     .setContent(renderToStaticMarkup(<RoutePopup route={_route} onChangeColor={onChangeColor} />))
 
-                .addTo(map)
-                .on('popupopen', ()=>{alert(33)})
-                .openOn(map);
+            //     .addTo(map)
+            //     .on('popupopen', ()=>{alert(33)})
+            //     .openOn(map);
 
-            });
-            l.getPopup().on('popupopen', function() {
-              //Your code here
-              alert(333);
-          });
+            // });
+          //   l.getPopup().on('popupopen', function() {
+          //     //Your code here
+          //     alert(333);
+          // });
           });
           return line;
         },

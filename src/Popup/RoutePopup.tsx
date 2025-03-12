@@ -3,13 +3,13 @@ import { RoutePopupType } from "./Type/PopupType";
 
 export default function RoutePopup({ route ,onChangeColor}: RoutePopupType) {
   const [changeColor,setChangeColor]=useState(route.RouteColor);
-  useEffect(()=>{
-    alert(1);
-    console.log(changeColor);
-    if ( document.getElementById("hs-color-input")) {
-    console.log( document.getElementById("hs-color-input"));
-    }
-  },[changeColor])
+  // useEffect(()=>{
+  //   alert(1);
+  //   console.log(changeColor);
+  //   if ( document.getElementById("hs-color-input")) {
+  //   console.log( document.getElementById("hs-color-input"));
+  //   }
+  // },[changeColor])
 // function _changecolor(){
 //   onChangeColor
 // }

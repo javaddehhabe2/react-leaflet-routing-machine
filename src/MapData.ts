@@ -3,6 +3,21 @@ import { CatalogType, SettingsType } from "./LeafletType";
 import { Marker } from "./MarkerType";
 export const DefaultColor = "#38f";
 export const ShopIconColor = "#8e44ad";
+export const Color = [
+  "red",
+  "aqua",
+  "fuchsia",
+  "green",
+  "lime",
+  "maroon",
+  "navy",
+  "olive",
+  "orange",
+  "purple",
+  "silver",
+  "teal",
+  "yellow",
+];
 export const RouteColor = [
   "red",
   "#e74c3c",

@@ -8,7 +8,7 @@ import { useAppContext } from "../context/AppContext";
 import { PiTruckTrailerBold } from "react-icons/pi";
 import { GetDistance, GetTime } from "../Utility";
 import Driver from "../Driver/Driver";
-import TimeLineBar from "./TimeLineBar";
+// import TimeLineBar from "./TimeLineBar";
 
 export default function RouteDetails({ Points }: RouteDetailsType) {
   const {
@@ -119,7 +119,7 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
             </div>
           </div>
         </div>
-        <TimeLineBar />
+        {/* <TimeLineBar /> */}
       </div>
 
       <div className="flex p-3 flex-col border-b border-b-togglecolor border-solid">
