@@ -15,6 +15,7 @@ import {
 } from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import MarkerPopup from "./Popup/MarkerPopup";
+import RoutePopup from "./Popup/RoutePopup";
 
 interface Layer1 extends Layer {
   _latlng?: LatLngLiteral;
@@ -94,7 +95,7 @@ export default function Routing({
           }
         });
         if (!_tmp[CurrentRoute.current])
-          _tmp[CurrentRoute.current] = { Route: [] };
+          _tmp[CurrentRoute.current] = { Route: [], RouteColor:RouteColor[CurrentRoute.current] ? RouteColor[CurrentRoute.current] : DefaultColor  };
 
         _tmp[CurrentRoute.current].Route.push(...newLayers);
 
@@ -183,6 +184,13 @@ export default function Routing({
     },
     [DeleteRouteLasso, CreateRouteLasso, setDrawLasso, setFlying]
   );
+
+  const onChangeColor = 
+    (color:string) => {
+    console.log(color);
+    alert(11);
+    }
+
   useEffect(() => {
     CurrentRoute.current = currentRouteIndex;
   }, [currentRouteIndex]);
@@ -206,9 +214,9 @@ export default function Routing({
     }
     const tmp_item = [...routes];
 
-    coordinates.forEach((route, index) => {
-      const _routeColor = RouteColor[index] ? RouteColor[index] : DefaultColor;
-      const _tmp = route.Route.map((object) =>
+    coordinates.forEach((_route, index) => {
+      const _routeColor = _route.RouteColor;
+      const _tmp = _route.Route.map((object) =>
         Leaflet.latLng(object.Latitude, object.Longitude)
       );
 
@@ -247,13 +255,20 @@ export default function Routing({
             l.on("click", function (e: any) {
               RouteClicked(index);
             });
-            l.on('contextmenu',(e:any) => {
-              Leaflet.popup()
-              .setLatLng(e.latlng)
-              .setContent('<pre>Hello</pre>')
-              .addTo(map)
-              .openOn(map);
+            l.on("contextmenu", (e: any) => {
+              Leaflet.popup({ closeButton: false })
+                .setLatLng(e.latlng)
+                .setContent(renderToStaticMarkup(<RoutePopup route={_route} onChangeColor={onChangeColor} />))
+
+                .addTo(map)
+                .on('popupopen', ()=>{alert(33)})
+                .openOn(map);
+
             });
+            l.getPopup().on('popupopen', function() {
+              //Your code here
+              alert(333);
+          });
           });
           return line;
         },
@@ -267,7 +282,7 @@ export default function Routing({
             MarkerID: 1,
             InstallmentEstatment: 1,
           };
-          route.Route.forEach((object) => {
+          _route.Route.forEach((object) => {
             if (
               wp.latLng.lat === object.Latitude &&
               wp.latLng.lng === object.Longitude

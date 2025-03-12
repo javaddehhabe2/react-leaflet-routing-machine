@@ -97,7 +97,7 @@ export default function BottomCenter({
         <Tooltip anchorSelect="#heavyweight-tooltip">
           نمایش مشتری با بار سنگین
         </Tooltip>
-        <div className=" border-r inline-block border-gray-500"></div>
+        <div className=" border-r inline-block border-gray-500 border-solid"></div>
         <div
           id="hide-tooltip"
           className={`p-3 cursor-pointer rounded-md  mx-1 ${
@@ -145,7 +145,7 @@ export default function BottomCenter({
           width={"45%"}
           maxWidth={600}
         >
-          <div className="flex flex-row-reverse justify-between border-b border-b-togglecolor">
+          <div className="flex flex-row-reverse justify-between border-b border-solid border-b-togglecolor">
             <h2 className="p-[10px] text-right w-full">راهنما </h2>
           </div>
           <div className=" grid grid-cols-3 gap-y-[5px]">

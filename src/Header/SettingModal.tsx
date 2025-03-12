@@ -67,8 +67,8 @@ export default function SettingModal({
         boxSizing={"border-box"}
       >
         <div className="flex w-[850px] h-[550px] bg-white rounded overflow-hidden">
-          <div className="w-[220px] bg-bodycolor py-5 flex flex-col">
-            <h2 className="close settings-modal-title">تنظیمات</h2>
+          <div className="w-[220px] bg-bodycolor py-5 flex flex-col pt-3">
+            <h2 className="close settings-modal-title text-2xl font-bold text-textcolor pb-3">تنظیمات</h2>
             <ul className="list-none p-0 m-0">
               <li
                 className={`py-4 px-5 cursor-pointer flex gap-[10px] text-modalside settingLI  ${
@@ -91,9 +91,9 @@ export default function SettingModal({
             </ul>
           </div>
 
-          <div className="p-5 flex-1 text-white overflow-y-hidden relative flex flex-col gap-y-3">
+          <div className="p-5 flex-1 text-white overflow-y-hidden relative flex flex-col gap-y-3 pt-0">
             <div className="text-textcolor mb-7 flex justify-between">
-              <h2>{show === "general" ? "عمومی" : "حجم وسیله ی نقلیه"}</h2>
+              <h2 className="text-2xl font-bold">{show === "general" ? "عمومی" : "حجم وسیله ی نقلیه"}</h2>
               <span
                 className="cursor-pointer text-close text-[28px] font-bold float-right hover:text-black"
                 onClick={handleClose}
@@ -153,7 +153,7 @@ export default function SettingModal({
             <div className="text-right flex gap-[5px] justify-end">
               <button
                 type="button"
-                className=" bg-primarycolor text-sidebarcolor px-5 py-[6px] ml-[10px] border border-primarycolor rounded cursor-pointer  text-center w-[106px] hover:opacity-90 active:border-none"
+                className=" bg-primarycolor text-sidebarcolor px-5 py-[6px] ml-[10px] border border-solid border-primarycolor rounded cursor-pointer  text-center w-[106px] hover:opacity-90 active:border-none"
                 onClick={AcceptModal}
               >
                 ذخیره
@@ -161,7 +161,7 @@ export default function SettingModal({
 
               <button
                 type="button"
-                className="bg-sidebarcolor text-primarycolor px-5 py-[6px] ml-[10px] border border-primarycolor rounded cursor-pointer  text-center w-[106px] hover:opacity-90 active:border-none"
+                className="bg-sidebarcolor text-primarycolor px-5 py-[6px] ml-[10px] border border-solid border-primarycolor rounded cursor-pointer  text-center w-[106px] hover:opacity-90 active:border-none"
                 onClick={handleClose}
               >
                 بستن

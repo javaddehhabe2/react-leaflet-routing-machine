@@ -100,7 +100,7 @@ export default function Header() {
               <div className="block absolute top-10 left-0 bg-white shadow-sm shadow-black rounded z-50 w-[150px]  ">
                 <ul>
                   <li
-                    className="border-b border-b-modalside flex pr-2 py-2 items-center"
+                    className="border-b border-b-modalside border-solid flex pr-2 py-2 items-center"
                     onClick={() => setShowSetting(true)}
                   >
                     <i className="fi fi-rr-settings mr-2"></i>
@@ -108,7 +108,7 @@ export default function Header() {
                       تنظیمات
                     </span>
                   </li>
-                  <li className="border-b border-b-modalside flex pr-2 items-center py-2 ">
+                  <li className="border-b border-b-modalside border-solid flex pr-2 items-center py-2 ">
                     <i className="fi fi-rr-exit  mr-2" title="خروج"></i>
                     <a
                       href="/Account/LogOut"

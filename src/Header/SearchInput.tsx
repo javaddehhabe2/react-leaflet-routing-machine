@@ -46,7 +46,7 @@ export default function SearchInput() {
           >
             {searchResult.map((res,indx) => (
               <li key={`search${indx}`}
-                className="p-2 border-b-[1px] border-gray-300 cursor-pointer"
+                className="p-2 border-b-[1px] border-gray-300 border-solid cursor-pointer"
                 onClick={() =>FlyTo(res)}
               >
                 <span>{res.CustomerName}</span>

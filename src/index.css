@@ -10,7 +10,7 @@
     width: calc(100% - 320px);
   }
   .border-right {
-    @apply pr-3 border-r border-r-togglecolor;
+    @apply pr-3 border-r border-r-togglecolor border-solid;
   }
   .onhover {
     @apply text-hover bg-bodycolor rounded h-6 p-[5px];
@@ -42,7 +42,7 @@
     @apply w-[100px] p-[5px] bg-labelsetting text-modalside rounded text-left;
   }
   .setting-item input[type="number"] {
-    @apply rounded h-7 min-w-[30px] max-w-[61px] bg-bodycolor ml-[6px] mr-[6px] pr-[6px] border-2 border-togglecolor;
+    @apply rounded h-7 min-w-[30px] max-w-[61px] bg-bodycolor ml-[6px] mr-[6px] pr-[6px] border-2 border-solid border-togglecolor;
   }
 
   .setting-item .unit {
@@ -50,7 +50,7 @@
   }
 
   .setting-item select {
-    @apply p-[5px] bg-labelsetting border border-hover text-modalside rounded;
+    @apply p-[5px] bg-labelsetting border border-hover border-solid text-modalside rounded;
   }
   .shadowMarker {
     text-shadow: 0 0 1em black, 0 0 0.5em black, 0px 0px 0.1em black;
@@ -63,13 +63,13 @@
     @apply w-[280px] fixed h-full top-16 bg-white text-black font-medium right-[320px] transition-shadow;
   }
   .profile-image {
-    @apply w-[50px] h-[50px] rounded-full mr-[10px] text-4xl p-[7px] border border-gray-400 text-black;
+    @apply w-[50px] h-[50px] rounded-full mr-[10px] text-4xl p-[7px] border border-gray-400 border-solid text-black;
   }
   .heavy {
-    @apply bg-drivericon text-primarycolor border border-drivericonborder;
+    @apply bg-drivericon text-primarycolor border border-drivericonborder border-solid;
   }
   .light {
-    @apply bg-drivericonlight text-drivericonlightcolor border border-drivericonlightborder;
+    @apply bg-drivericonlight text-drivericonlightcolor border border-drivericonlightborder border-solid;
   }
 }
 

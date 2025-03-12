@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup,WMSTileLayer  } from "react-leaflet";
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
 import {
@@ -11,7 +11,6 @@ import {
 } from "leaflet";
 import Routing from "./Routing";
 import { createTheme, ThemeProvider, Stack } from "@mui/material";
-
 import {
   RouteCoordinate,
   LassoController,
@@ -22,6 +21,7 @@ import {
 } from "./LeafletType";
 import { Marker as MarkerType } from "./MarkerType";
 import {
+  RouteColor,
   DefaultColor,
   MarkersDetail,
   ShopIconColor,
@@ -191,7 +191,7 @@ function App() {
     (e: LeafletMouseEvent) => {
       setFlying(undefined);
       if (!coordinates[currentRouteIndex])
-        coordinates[currentRouteIndex] = { Route: [] };
+        coordinates[currentRouteIndex] = { Route: [], RouteColor:RouteColor[currentRouteIndex] ? RouteColor[currentRouteIndex] : DefaultColor };
 
       const lat = e.latlng.lat,
         lng = e.latlng.lng;
@@ -235,7 +235,6 @@ function App() {
                           lat: tmp.Route[tmp.Route.length - 1].Latitude,
                           lng: tmp.Route[tmp.Route.length - 1].Longitude,
                         });
-                        console.log(toLatLng, fromLatLng);
                         Distance = fromLatLng.distanceTo(toLatLng);
                       }
                       tmp.Route.push({ ..._MarkerShops, Distance });
@@ -360,6 +359,9 @@ function App() {
     },
     [coordinates, flying]
   );
+  // const layerParams = useMemo(() => {
+  //   return {hello: 'world'};
+  // }, []);
   return (
     <ThemeProvider theme={theme}>
       <AppContextProvider initialValue={{ ...contextValue, coordinates }}>
@@ -373,8 +375,14 @@ function App() {
         >
           <TileLayer
             attribution=""
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            // url="https://{s}.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            url="https://raster.snappmaps.ir/styles/snapp-style/{z}/{x}/{y}.png"
           />
+           {/* <WMSTileLayer
+            url={`http://ows.mundialis.de/services/service?`}
+            params={{transparent:true,layers:"TOPO-OSM-WMS"}}
+          /> */}
           <Routing
             setCurrentRouteIndex={setCurrentRouteIndex}
             ondblclickMarker={ondblclickMarker}

@@ -211,7 +211,7 @@ export default function RouteDetails({ Points }: RouteDetailsType) {
         <div className="text-sm flex flex-row justify-between flex-1 items-center">
             <div>
                 
-                <div className="flex bg-gray-200 p-2 rounded w-40 justify-between items-center border border-togglecolor">
+                <div className="flex bg-gray-200 p-2 rounded w-40 justify-between items-center border border-solid border-togglecolor">
                     <div className="flex flex-row-reverse cursor-pointer bg-indigo-500 p-2 rounded text-white w-24 justify-center gap-[12px]">
                     <i className="fi fi-rr-truck-moving"></i>
                     <span>سنگین</span>

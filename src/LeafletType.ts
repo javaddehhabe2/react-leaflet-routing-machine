@@ -3,6 +3,7 @@ import { Marker } from "./MarkerType";
 export type LassoController = "Disable" | "Add" | "Remove";
 export interface RouteCoordinate {
   Route: Marker[];
+  RouteColor:string;
 }
 export interface RoutingType {
   setCurrentRouteIndex: React.Dispatch<React.SetStateAction<number>>;

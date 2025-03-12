@@ -39,7 +39,7 @@ export default function TimeLineBar() {
   }, [coordinates, currentRouteIndex, timeDistance]);
 
   return (
-    <div className="flex h-4 mb-2 rounded overflow-hidden py-0 border border-togglecolor my-[10px] mx-0 p-[1px]">
+    <div className="flex h-4 mb-2 rounded overflow-hidden py-0 border border-solid border-togglecolor my-[10px] mx-0 p-[1px]">
       {bar.map((_bar, indx) => (
         <div
           key={`bar${indx}`}
