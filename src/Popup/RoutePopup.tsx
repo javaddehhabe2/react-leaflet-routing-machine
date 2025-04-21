@@ -1,18 +1,13 @@
-import React,{useEffect, useState} from "react";
+import React, { useState } from "react";
 import { RoutePopupType } from "./Type/PopupType";
 
-export default function RoutePopup({ route ,onChangeColor}: RoutePopupType) {
-  const [changeColor,setChangeColor]=useState(route.RouteColor);
-  // useEffect(()=>{
-  //   alert(1);
-  //   console.log(changeColor);
-  //   if ( document.getElementById("hs-color-input")) {
-  //   console.log( document.getElementById("hs-color-input"));
-  //   }
-  // },[changeColor])
-// function _changecolor(){
-//   onChangeColor
-// }
+export default function RoutePopup({ route, onChangeColor }: RoutePopupType) {
+  const [changeColor, setChangeColor] = useState(route.RouteColor || "#000000");
+
+  const handleColorChange = (color: string) => {
+    setChangeColor(color);
+    onChangeColor(color);
+  };
 
   return (
     <>
@@ -36,7 +31,7 @@ export default function RoutePopup({ route ,onChangeColor}: RoutePopupType) {
             className="p-1 h-10 w-14 block bg-white border border-solid border-gray-200 cursor-pointer rounded-lg disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700"
             id="hs-color-input"
             value={changeColor}
-            onChange={(e)=>onChangeColor(e.currentTarget.value)}
+            onChange={(e) => handleColorChange(e.currentTarget.value)}
             title="لطفا رنگ مسیر را مشخص کنید"
           />
         </div>

@@ -16,7 +16,7 @@ import {
 } from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
 import MarkerPopup from "./Popup/MarkerPopup";
-// import RoutePopup from "./Popup/RoutePopup";
+import RoutePopup from "./Popup/RoutePopup";
 
 interface Layer1 extends Layer {
   _latlng?: LatLngLiteral;
@@ -64,6 +64,7 @@ export default function Routing({
         console.log(e);
       }
     }
+    setRoutes([]);
   }, [map, routes]);
 
   const CreateRouteLasso = useCallback(
@@ -89,14 +90,17 @@ export default function Routing({
             allMarkers.forEach((_marker) => {
               if (
                 _marker.Latitude === newobject._latlng?.lat &&
-                _marker.Longitude === newobject._latlng.lng
+                _marker.Longitude === newobject._latlng?.lng
               )
                 newLayers.push(_marker);
             });
           }
         });
         if (!_tmp[CurrentRoute.current])
-          _tmp[CurrentRoute.current] = { Route: [], RouteColor:RouteColor[CurrentRoute.current] ? RouteColor[CurrentRoute.current] : DefaultColor  };
+          _tmp[CurrentRoute.current] = {
+            Route: [],
+            RouteColor: RouteColor[CurrentRoute.current] || DefaultColor,
+          };
 
         _tmp[CurrentRoute.current].Route.push(...newLayers);
 
@@ -186,11 +190,17 @@ export default function Routing({
     [DeleteRouteLasso, CreateRouteLasso, setDrawLasso, setFlying]
   );
 
-  const onChangeColor = 
-    (color:string) => {
-    console.log(color);
-    alert(11);
-    }
+  const onChangeColor = useCallback(
+    (color: string, routeIndex: number) => {
+      const updatedCoordinates = [...coordinates];
+      updatedCoordinates[routeIndex] = {
+        ...updatedCoordinates[routeIndex],
+        RouteColor: color,
+      };
+      setCoordinates(updatedCoordinates);
+    },
+    [coordinates, setCoordinates]
+  );
 
   useEffect(() => {
     CurrentRoute.current = currentRouteIndex;
@@ -216,7 +226,7 @@ export default function Routing({
     const tmp_item = [...routes];
 
     coordinates.forEach((_route, index) => {
-      const _routeColor = Color[index] ? Color[index] : DefaultColor;// _route.RouteColor;
+      const _routeColor = _route.RouteColor || Color[index] || DefaultColor;
       const _tmp = _route.Route.map((object) =>
         Leaflet.latLng(object.Latitude, object.Longitude)
       );
@@ -238,7 +248,7 @@ export default function Routing({
           },
         }),
         routeLine: function (route: any) {
-          var line = Leaflet.Routing.line(route, {
+          const line = Leaflet.Routing.line(route, {
             extendToWaypoints: false,
             routeWhileDragging: false,
             autoRoute: true,
@@ -252,24 +262,24 @@ export default function Routing({
               { color: "white", opacity: 1, weight: 1, dashArray: "5, 5" },
             ],
           });
+
           line.eachLayer(function (l: any) {
-            l.on("click", function (e: any) {
+            l.on("click", function () {
               RouteClicked(index);
             });
-            // l.on("contextmenu", (e: any) => {
-            //   Leaflet.popup({ closeButton: false })
-            //     .setLatLng(e.latlng)
-            //     .setContent(renderToStaticMarkup(<RoutePopup route={_route} onChangeColor={onChangeColor} />))
-
-            //     .addTo(map)
-            //     .on('popupopen', ()=>{alert(33)})
-            //     .openOn(map);
-
-            // });
-          //   l.getPopup().on('popupopen', function() {
-          //     //Your code here
-          //     alert(333);
-          // });
+            l.on("contextmenu", (e: any) => {
+              Leaflet.popup({ closeButton: false })
+                .setLatLng(e.latlng)
+                .setContent(
+                  renderToStaticMarkup(
+                    <RoutePopup
+                      route={_route}
+                      onChangeColor={(color) => onChangeColor(color, index)}
+                    />
+                  )
+                )
+                .openOn(map);
+            });
           });
           return line;
         },
@@ -314,8 +324,9 @@ export default function Routing({
       }).addTo(map);
 
       tmp_item.push(item);
-      setRoutes(tmp_item);
     });
+
+    setRoutes(tmp_item);
 
     map.removeEventListener("lasso.finished", RouteLasso);
     map.on("lasso.finished", RouteLasso);
@@ -337,11 +348,7 @@ export default function Routing({
     if (["Add", "Remove"].includes(drawLasso))
       if (lassoRef.current && !lassoRef.current.enabled())
         lassoRef.current.enable();
-  }, [drawLasso]);
-
-  // useEffect(() => {
-
-  // }, [flying]);
+  }, [drawLasso, map]);
 
   const RouteClicked = useCallback(
     (index: number) => {
@@ -351,5 +358,6 @@ export default function Routing({
     },
     [setCurrentRouteIndex, setFlying, setShowDriver]
   );
+
   return null;
 }
