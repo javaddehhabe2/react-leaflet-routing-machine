@@ -13,6 +13,9 @@ export interface RoutingType {
   DrawIcon: (_marker: Marker, RouteColor: string, indx: number) => JSX.Element;
   drawLasso: LassoController;
   setDrawLasso: React.Dispatch<React.SetStateAction<LassoController>>;
+  _routeColor:string;
+  waypoints:any;
+  _index:number;
 }
 
 export interface RouteDetailsType {

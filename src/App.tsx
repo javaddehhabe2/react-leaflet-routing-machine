@@ -1,6 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
-import { MapContainer, TileLayer, Marker, Popup,WMSTileLayer  } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  WMSTileLayer,
+} from "react-leaflet";
 import Control from "react-leaflet-custom-control";
 import "leaflet/dist/leaflet.css";
 import {
@@ -9,7 +15,7 @@ import {
   type LeafletMouseEvent,
   DivIcon,
 } from "leaflet";
-import Routing from "./Routing";
+// import Routing from "./Routing";
 import { createTheme, ThemeProvider, Stack } from "@mui/material";
 import {
   RouteCoordinate,
@@ -42,6 +48,8 @@ import Icon1 from "./Icon/Icon";
 import MarkerShopPopup from "./Popup/MarkerShopPopup";
 import { DriverType } from "./DriverType";
 import RouteDetails from "./RouteDetails/RouteDetails";
+import { RoutingMachine } from "./RoutingMachine";
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 const Leaflet = require("leaflet");
 
@@ -86,6 +94,9 @@ function App() {
   const [saveToLocal, setSaveToLocal] = useState<boolean>(true);
 
   useEffect(() => {
+    console.log(flying);
+  }, [flying]);
+  useEffect(() => {
     const _Settings: SettingsType = JSON.parse(
       Storage.getLocal("LS_Settings") ?? "[]"
     );
@@ -124,10 +135,13 @@ function App() {
     if (shops.length > 0) return;
     const _Shops: MarkerType[] = [];
 
+    let index=1;
     MarkersDetail.forEach((marker) => {
       if (marker.Shops) {
         marker.Shops.forEach((_m) => {
+          index++;
           _Shops.push({
+            index:index+100000,
             CustomerID: _m.ShopCode,
             CustomerName: _m.ShopName,
             CustomerAddress: _m.ShopAddress,
@@ -191,7 +205,12 @@ function App() {
     (e: LeafletMouseEvent) => {
       setFlying(undefined);
       if (!coordinates[currentRouteIndex])
-        coordinates[currentRouteIndex] = { Route: [], RouteColor:RouteColor[currentRouteIndex] ? RouteColor[currentRouteIndex] : DefaultColor };
+        coordinates[currentRouteIndex] = {
+          Route: [],
+          RouteColor: RouteColor[currentRouteIndex]
+            ? RouteColor[currentRouteIndex]
+            : DefaultColor,
+        };
 
       const lat = e.latlng.lat,
         lng = e.latlng.lng;
@@ -265,7 +284,14 @@ function App() {
         }
       }
     },
-    [coordinates, currentRouteIndex, setCoordinates, allMarkers, setFlying,shops]
+    [
+      coordinates,
+      currentRouteIndex,
+      setCoordinates,
+      allMarkers,
+      setFlying,
+      shops,
+    ]
   );
 
   const NewRoute = useCallback(() => {
@@ -321,27 +347,23 @@ function App() {
     setAllMarkers,
   };
   const DrawIcon = useCallback(
-    (_marker: MarkerType, RouteColor: string, indx: number) => {
-      let exist = false;
+    (_marker: MarkerType) => {
+      let RouteColor = "";
       let Shadow = false;
 
       coordinates.forEach((_route, indx) => {
         let existCoor = coordinates[indx].Route.find(
           (el) =>
-            el.Latitude === _marker.Latitude &&
-            el.Longitude === _marker.Longitude
+            el.index === _marker.index
         );
-        if (existCoor) exist = true;
+        if (existCoor) RouteColor = coordinates[indx].RouteColor;
       });
 
       let color = RouteColor
         ? RouteColor
-        : exist
-        ? "transparent"
         : _marker.MarkerID === 10
         ? ShopIconColor
         : DefaultColor;
-
       if (flying)
         Shadow =
           flying.lat === _marker.Latitude && flying.lng === _marker.Longitude;
@@ -350,18 +372,32 @@ function App() {
         <Icon1
           type={_marker.MarkerID}
           text={_marker.CustomerName}
-          index={indx}
+          index={0}
           Shadow={Shadow}
-          isSelected={exist}
+          isSelected={!!RouteColor}
           routeColor={color}
         />
       );
     },
     [coordinates, flying]
   );
-  // const layerParams = useMemo(() => {
-  //   return {hello: 'world'};
-  // }, []);
+  const handleClusterReady = (clusterGroup: any) => {
+    // clusterGroupRef.current = clusterGroup;
+    console.log("handleClusterReady");
+    // Prevent default left-click expand
+    clusterGroup.on('clusterclick', (e: any) => {
+      console.log("clusterclick");
+      e.originalEvent.preventDefault();
+      e.originalEvent.stopPropagation();
+    });
+
+    // Right-click to expand
+    clusterGroup.on('clusterrightclick', (e: any) => {
+      console.log("clusterrightclick");
+      const cluster = e.layer;
+      cluster.spiderfy(); // expand manually
+    });
+  };
   return (
     <ThemeProvider theme={theme}>
       <AppContextProvider initialValue={{ ...contextValue, coordinates }}>
@@ -371,47 +407,56 @@ function App() {
           center={position}
           zoom={11}
           style={{ height: "100vh", zIndex: 0 }}
-          zoomControl={false}
-        >
+          zoomControl={false}>
           <TileLayer
             attribution=""
             // url="https://{s}.maptiles.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
             // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             url="https://raster.snappmaps.ir/styles/snapp-style/{z}/{x}/{y}.png"
           />
-           {/* <WMSTileLayer
+          {/* <WMSTileLayer
             url={`http://ows.mundialis.de/services/service?`}
             params={{transparent:true,layers:"TOPO-OSM-WMS"}}
           /> */}
-          <Routing
-            setCurrentRouteIndex={setCurrentRouteIndex}
-            ondblclickMarker={ondblclickMarker}
-            removedMarker={removedMarker}
-            setRemovedMarker={setRemovedMarker}
-            DrawIcon={DrawIcon}
-            drawLasso={drawLasso}
-            setDrawLasso={setDrawLasso}
-          />
+          <MarkerClusterGroup 
+            disableClusteringAtZoom={Infinity}  
+          chunkedLoading
+        showCoverageOnHover={false}
+        spiderfyOnMaxZoom={false}
+        zoomToBoundsOnClick={true}>
+            <Fragment>
+          {coordinates.map((_route, index) => (
+            <RoutingMachine
+            key={`coor${index}`}
+              setCurrentRouteIndex={setCurrentRouteIndex}
+              waypoints={_route.Route.map((object) =>
+                [object.Latitude, object.Longitude]
+              )}
+              _routeColor={_route.RouteColor}
+              _index={index}
+            />
+          ))}
+
           {allMarkers.map((_marker, index) => {
             return (
               <Marker
-                key={index}
+                key={`markers${index}`}
                 position={[_marker.Latitude, _marker.Longitude]}
                 draggable={false}
                 bubblingMouseEvents={false}
                 eventHandlers={{
                   click: (e) => onClickMarker(e),
+                  dblclick:(e)=>ondblclickMarker(e.latlng.lat,e.latlng.lng),
                   mouseover: (event) => event.target.openPopup(),
                   mouseout: (event) => event.target.closePopup(),
                 }}
                 icon={
                   new DivIcon({
-                    html: renderToStaticMarkup(DrawIcon(_marker, "", 0)),
+                    html: renderToStaticMarkup(DrawIcon(_marker)),
                     iconSize: [10, 10],
                     className: "",
                   })
-                }
-              >
+                }>
                 <Popup closeButton={false} minWidth={281}>
                   <MarkerPopup marker={_marker} />
                 </Popup>
@@ -432,36 +477,34 @@ function App() {
                 }}
                 icon={
                   new DivIcon({
-                    html: renderToStaticMarkup(DrawIcon(_marker, "", 0)),
+                    html: renderToStaticMarkup(DrawIcon(_marker)),
                     iconSize: [10, 10],
                     className: "",
                   })
-                }
-              >
+                }>
                 <Popup closeButton={false} minWidth={281} className={"bg-red"}>
                   <MarkerShopPopup marker={_marker} />
                 </Popup>
               </Marker>
             );
           })}
-
+          </Fragment>
+</MarkerClusterGroup>
           <Control
             position="bottomleft"
             prepend
-            container={{ className: "left-3" }}
-          >
+            container={{ className: "left-3" }}>
             <BottomLeft />
           </Control>
           <Control
             position="topright"
-            container={{ className: "CenterControl" }}
-          >
+            container={{ className: "CenterControl" }}>
             <BottomCenter drawLasso={drawLasso} DrawLasso={DrawLasso} />
           </Control>
 
           <Control position="topleft">
             <Stack style={{ width: "100vw" }}>
-            <RouteDetails Points={coordinates[currentRouteIndex]} />
+              <RouteDetails Points={coordinates[currentRouteIndex]} />
             </Stack>
           </Control>
         </MapContainer>

@@ -3,48 +3,109 @@ import { CatalogType, SettingsType } from "./LeafletType";
 import { Marker } from "./MarkerType";
 export const DefaultColor = "#38f";
 export const ShopIconColor = "#8e44ad";
-export const Color = [
-  "red",
-  "aqua",
-  "fuchsia",
-  "green",
-  "lime",
-  "maroon",
-  "navy",
-  "olive",
-  "orange",
-  "purple",
-  "silver",
-  "teal",
-  "yellow",
-];
+// export const Color = [
+//   "red",
+//   "aqua",
+//   "fuchsia",
+//   "green",
+//   "lime",
+//   "maroon",
+//   "navy",
+//   "olive",
+//   "orange",
+//   "purple",
+//   "silver",
+//   "teal",
+//   "yellow",
+// ];
 export const RouteColor = [
   "red",
+  "#17202a",
+  "#f4d03f",
+  "#2980b9",
+  "#DFFF00",
   "#e74c3c",
   "#9b59b6",
-  "#2980b9",
   "#17a589",
   "#85c1e9",
   "#58d68d",
-  "#f4d03f",
   "#b9770e",
   "#909497",
   "#616a6b",
-  "#17202a",
-  "#DFFF00",
+
   "#0000FF",
 ];
 export const ColorList = [
-  "#FF0000", "#FF4500", "#FF6347", "#FF1493", "#FF69B4", "#FF00FF", "#FF8C00",
-  "#FFA500", "#FFFF00", "#FFD700", "#7FFF00", "#00FF00", "#32CD32",
-  "#00FF7F", "#00FA9A", "#00FFFF", "#40E0D0", "#00BFFF", "#1E90FF", "#0000FF", "#4B0082",
-  "#8A2BE2", "#9932CC", "#9400D3", "#BA55D3", "#EE82EE", "#DA70D6", "#D2691E", "#FF7F50",
-  "#FFA07A", "#DC143C", "#B22222", "#A52A2A", "#8B0000", "#8B008B", "#800080",
-  "#9370DB", "#7B68EE", "#6A5ACD", "#483D8B", "#4169E1", "#4682B4", "#5F9EA0", "#00CED1",
-  "#48D1CC", "#20B2AA", "#3CB371", "#2E8B57", "#006400", "#556B2F", "#B0E0E6", "#98FB98",
-  "#808000", "#6B8E23", "#BDB76B", "#F0E68C", "#DDA0DD", "#6495ED",
-  "#0000FF", "#FFFF00", "#FF00FF", "#00FFFF", "#FF4500", "#B0C4DE", "#A020F0", "#FA8072",
-  "#CD5C5C", "#DAA520", "#B8860B", "#7CFC00",
+  "#FF0000",
+  "#FF4500",
+  "#FF6347",
+  "#FF1493",
+  "#FF69B4",
+  "#FF00FF",
+  "#FF8C00",
+  "#FFA500",
+  "#FFFF00",
+  "#FFD700",
+  "#7FFF00",
+  "#00FF00",
+  "#32CD32",
+  "#00FF7F",
+  "#00FA9A",
+  "#00FFFF",
+  "#40E0D0",
+  "#00BFFF",
+  "#1E90FF",
+  "#0000FF",
+  "#4B0082",
+  "#8A2BE2",
+  "#9932CC",
+  "#9400D3",
+  "#BA55D3",
+  "#EE82EE",
+  "#DA70D6",
+  "#D2691E",
+  "#FF7F50",
+  "#FFA07A",
+  "#DC143C",
+  "#B22222",
+  "#A52A2A",
+  "#8B0000",
+  "#8B008B",
+  "#800080",
+  "#9370DB",
+  "#7B68EE",
+  "#6A5ACD",
+  "#483D8B",
+  "#4169E1",
+  "#4682B4",
+  "#5F9EA0",
+  "#00CED1",
+  "#48D1CC",
+  "#20B2AA",
+  "#3CB371",
+  "#2E8B57",
+  "#006400",
+  "#556B2F",
+  "#B0E0E6",
+  "#98FB98",
+  "#808000",
+  "#6B8E23",
+  "#BDB76B",
+  "#F0E68C",
+  "#DDA0DD",
+  "#6495ED",
+  "#0000FF",
+  "#FFFF00",
+  "#FF00FF",
+  "#00FFFF",
+  "#FF4500",
+  "#B0C4DE",
+  "#A020F0",
+  "#FA8072",
+  "#CD5C5C",
+  "#DAA520",
+  "#B8860B",
+  "#7CFC00",
 ];
 export const Setting: SettingsType = {
   TimeDistance: 2,
@@ -118,6 +179,7 @@ export const DriverDetail: DriverType[] = [
 ];
 export const MarkersDetail: Marker[] = [
   {
+    index: 34,
     CustomerID: "5d0d5988-0d5b-44db-8931-011f11b12348",
     CustomerName: "لیلی الهی",
     CustomerAddress:
@@ -143,6 +205,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 35,
     CustomerID: "3bf7f4b6-9676-4411-8350-014333d9e0a8",
     CustomerName: "شرکت نگین جان و مه",
     CustomerAddress: "M9HC+HXC Tehran, Tehran Province, Iran",
@@ -167,6 +230,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 1,
     CustomerID: "064741c3-f294-48ab-bf9b-017e8abddd13",
     CustomerName: "وحیدمیرلو",
     CustomerAddress: "تهران،فردوس،ب. آیت الله کاشانی،خ. وفا آذر شمالی",
@@ -211,6 +275,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 2,
     CustomerID: "2bc72d68-50a0-4f7d-8bb8-1b394222fb12",
     CustomerName: "اسماعیل واضحی فرد / تهران",
     CustomerAddress:
@@ -236,6 +301,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 3,
     CustomerID: "68b5d373-7ad9-41ec-8919-1bb9a08c6fb6",
     CustomerName: "گروه صنعتی رفاه گستر آنوشه/تهران",
     CustomerAddress: "G4MF+922 Adaran, Tehran Province, Iran",
@@ -260,6 +326,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 4,
     CustomerID: "195088ab-ee22-4656-b27d-2495dde4a60f",
     CustomerName: "مهدی اصغری علائی",
     CustomerAddress:
@@ -285,6 +352,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 5,
     CustomerID: "b16f411c-582a-45b5-aa91-24ff6755b8fb",
     CustomerName: "ایده فرازان سورین",
     CustomerAddress: "تهران",
@@ -309,6 +377,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 6,
     CustomerID: "1ad51996-190a-42d8-8c0a-2582ac2119a0",
     CustomerName: "شرکت امیر حسینی جعفری",
     CustomerAddress: "خیابان تکاوران ، بلوار دلاوران کوچه دانش کهن",
@@ -333,6 +402,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 7,
     CustomerID: "b1002314-3049-4b03-a1ef-2716e549114b",
     CustomerName: "ساناز اشتری",
     CustomerAddress: "خیابان تجریش ، خیابان فرشته ، کوچه آقا بزرگی",
@@ -365,6 +435,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 8,
     CustomerID: "10fc9623-d0b8-4f68-a423-2b62fca3323b",
     CustomerName: "صنایع فولاد کاوه",
     CustomerAddress: "Q75X+W7C Tehran, Tehran Province, Iran",
@@ -389,6 +460,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 9,
     CustomerID: "24de83bb-53ea-4d57-98e8-305b06ead92a",
     CustomerName: "کورش عدنی آذر /تهران",
     CustomerAddress:
@@ -422,6 +494,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 10,
     CustomerID: "b5252323-2fba-454a-837e-46a24a246106",
     CustomerName: "زهره شعبانی",
     CustomerAddress: "یافت آباد جنوبی خیابان میرهاشمی",
@@ -454,6 +527,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 11,
     CustomerID: "7db19e4a-8605-4ab2-bc16-70a643493bea",
     CustomerName: "دیبا بحرینی",
     CustomerAddress: "تهران - شهرک امید - بلوک a12  ورودی 3 واحد 12",
@@ -486,6 +560,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 12,
     CustomerID: "2d71d8c0-7bb3-45d9-83c2-7238ee060ae3",
     CustomerName: "سلما منشی زاده",
     CustomerAddress:
@@ -523,6 +598,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 13,
     CustomerID: "ac7636ef-9b97-444b-a071-736ffaba0199",
     CustomerName: "کتایون اخوت عراقی",
     CustomerAddress:
@@ -568,6 +644,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 14,
     CustomerID: "18416127-db85-434e-bd8e-8aac7c879de7",
     CustomerName: "مریم  , حقیقی",
     CustomerAddress: "Q8HX+W6P Tehran, Tehran Province, Iran",
@@ -592,6 +669,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 15,
     CustomerID: "c1bb2a37-d6e7-4770-9d93-8df803e195e8",
     CustomerName: "ماموت دیزل",
     CustomerAddress: "Q8C6+PJM Tehran, Tehran Province, Iran",
@@ -616,6 +694,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 16,
     CustomerID: "a182654a-8839-4dad-a69e-98a5db0482cb",
     CustomerName: "عابد حاصل مهری",
     CustomerAddress:
@@ -641,6 +720,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 17,
     CustomerID: "b7ec6dc7-fbde-4652-a59c-a487a94f2c54",
     CustomerName: "مرضیه کریمخانی",
     CustomerAddress: "خیابان آزادی کوچه میرهاشمی",
@@ -673,6 +753,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 18,
     CustomerID: "2123fcd3-9ae6-4c23-a74c-a96d6460da72",
     CustomerName: "محمد جعفر مالمیر",
     CustomerAddress:
@@ -710,6 +791,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 19,
     CustomerID: "2333504d-88b1-4b9c-827c-aa3cefe8c4cc",
     CustomerName: "ناصر غفاری",
     CustomerAddress: "اتوبان لشگری - بلوار ایران خودرو- سروستان دوم",
@@ -742,6 +824,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 20,
     CustomerID: "a9f4b491-cd87-4c14-b71e-c0a1067338d6",
     CustomerName: "ناصر نظامی",
     CustomerAddress: "خیابان فردوسی بین ایرانشهر و موسوی ، نبش کوچه مینو",
@@ -766,6 +849,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 21,
     CustomerID: "8921261b-08fb-465c-b3c1-c7d8ad6dcedd",
     CustomerName: "شرکت انتقال داده های آسیاتک",
     CustomerAddress:
@@ -791,6 +875,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 22,
     CustomerID: "aa4985ac-75cd-4829-90a7-ccb647c07660",
     CustomerName: "عزیز عزیزی",
     CustomerAddress: "تهران ، کریمخان زند بین نجات اللهی و قرنی",
@@ -839,6 +924,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 23,
     CustomerID: "b23897f8-d1fb-4430-81d3-d2aa36cb9c3d",
     CustomerName: "شرکت صنایع و دانش رافع ایرانیان کیش",
     CustomerAddress: "Maine Analyst Fields Music Soft",
@@ -863,6 +949,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 24,
     CustomerID: "ece252f9-c2d8-473c-a890-d3f49b28496d",
     CustomerName: "الهام سجادی",
     CustomerAddress: "اتوبان سعیدی ، خیابان مراد بیگی",
@@ -887,6 +974,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 25,
     CustomerID: "077b4edc-e8ad-408e-afd2-d5329eae4a83",
     CustomerName: "مهرداد مومنی",
     CustomerAddress: "ونک خیابان ملاصدرا کوچه گرمسار",
@@ -911,6 +999,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 26,
     CustomerID: "9087a881-641a-4720-bbe1-d795bb55bbfa",
     CustomerName: "جعفر اشتهاردی",
     CustomerAddress: "میدان اول شهران کوچه شقایق",
@@ -935,6 +1024,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 27,
     CustomerID: "c250bc7e-eb77-4316-b28c-dd009e9c6e13",
     CustomerName: "بازرگانی کتاب گستر",
     CustomerAddress: "PQW3+8RF Kamard Industrial Area, Tehran Province, Iran",
@@ -959,6 +1049,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 28,
     CustomerID: "0020cbcd-2955-4713-8e99-de5fa210abd8",
     CustomerName: "وحید مقدم متین",
     CustomerAddress: "خیابان ولیعصر - بالاتر از نیایش ",
@@ -1071,6 +1162,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 29,
     CustomerID: "c68e5102-d960-4894-97b0-e030814b77c5",
     CustomerName: "پیمان خطوط گستر-تهران",
     CustomerAddress: "QQ8G+XR3 Pardis, Tehran Province, Iran",
@@ -1095,6 +1187,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 30,
     CustomerID: "ffbb4e85-7236-4972-84e8-e2f1ed9d137b",
     CustomerName: "هنگامه سلیمانی",
     CustomerAddress:
@@ -1128,6 +1221,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 31,
     CustomerID: "9b2b73bb-d51e-453e-8412-f05c186785e8",
     CustomerName: "روزبه محمدزاده",
     CustomerAddress: "خیابان ولیعصر میدان جهاد کوچه افتخاری نیا",
@@ -1160,6 +1254,7 @@ export const MarkersDetail: Marker[] = [
     ],
   },
   {
+    index: 32,
     CustomerID: "913eaf3a-053c-4133-96fe-f8b3a7a158e7",
     CustomerName: "فرزانه نظاری",
     CustomerAddress:
@@ -1197,6 +1292,7 @@ export const MarkersDetail: Marker[] = [
     Shops: null,
   },
   {
+    index: 33,
     CustomerID: "470dfa02-6734-473a-bf3c-fd23ee806a3f",
     CustomerName: "سارا رونور",
     CustomerAddress:

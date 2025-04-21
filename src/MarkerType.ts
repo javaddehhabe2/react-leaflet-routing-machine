@@ -1,4 +1,5 @@
 export interface Marker {
+  index:number;
   CustomerID: string;
   CustomerName: string;
   CustomerAddress: string;
