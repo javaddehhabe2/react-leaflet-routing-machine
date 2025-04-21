@@ -19,7 +19,7 @@ export const Color = [
   "yellow",
 ];
 export const RouteColor = [
-  "red",
+  "#FF0000",
   "#e74c3c",
   "#9b59b6",
   "#2980b9",
