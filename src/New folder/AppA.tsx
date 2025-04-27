@@ -50,8 +50,8 @@ import { DriverType } from "./DriverType";
 import RouteDetails from "./RouteDetails/RouteDetails";
 import { RoutingMachine } from "./RoutingMachine";
 import MarkerClusterGroup from "react-leaflet-cluster";
-
-const Leaflet = require("leaflet");
+import Leaflet from 'leaflet';
+// const Leaflet = require("leaflet");
 
 const theme = createTheme({
   typography: {
@@ -93,9 +93,7 @@ function App() {
   const [isHeavy, setIsHeavy] = useState<boolean>(false);
   const [saveToLocal, setSaveToLocal] = useState<boolean>(true);
 
-  useEffect(() => {
-    console.log(flying);
-  }, [flying]);
+
   useEffect(() => {
     const _Settings: SettingsType = JSON.parse(
       Storage.getLocal("LS_Settings") ?? "[]"
@@ -381,23 +379,7 @@ function App() {
     },
     [coordinates, flying]
   );
-  const handleClusterReady = (clusterGroup: any) => {
-    // clusterGroupRef.current = clusterGroup;
-    console.log("handleClusterReady");
-    // Prevent default left-click expand
-    clusterGroup.on('clusterclick', (e: any) => {
-      console.log("clusterclick");
-      e.originalEvent.preventDefault();
-      e.originalEvent.stopPropagation();
-    });
 
-    // Right-click to expand
-    clusterGroup.on('clusterrightclick', (e: any) => {
-      console.log("clusterrightclick");
-      const cluster = e.layer;
-      cluster.spiderfy(); // expand manually
-    });
-  };
   return (
     <ThemeProvider theme={theme}>
       <AppContextProvider initialValue={{ ...contextValue, coordinates }}>
@@ -419,11 +401,11 @@ function App() {
             params={{transparent:true,layers:"TOPO-OSM-WMS"}}
           /> */}
           <MarkerClusterGroup 
-            disableClusteringAtZoom={Infinity}  
-          chunkedLoading
-        showCoverageOnHover={false}
-        spiderfyOnMaxZoom={false}
-        zoomToBoundsOnClick={true}>
+           disableClusteringAtZoom={Infinity}  // 💡 Never uncluster markers
+           spiderfyOnMaxZoom={false}           // ❌ Don't auto-expand on click
+           zoomToBoundsOnClick={false}         // ❌ Don't auto-zoom on click
+           showCoverageOnHover={false}         // Optional: disable blue shape
+          >
             <Fragment>
           {coordinates.map((_route, index) => (
             <RoutingMachine
