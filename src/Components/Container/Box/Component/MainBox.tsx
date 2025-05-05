@@ -2,6 +2,7 @@ import { memo } from "react";
 import { BoxContainer, MainBoxType, SmallBox } from "@Container/Box";
 
 const MainBox = ({ containerBox, position }: MainBoxType) => {
+  console.log(containerBox);
   return (
     <group>
       <mesh position={position}>
@@ -23,7 +24,7 @@ const MainBox = ({ containerBox, position }: MainBoxType) => {
               color={box?.color ?? ""}
               size={[box.size.width, box.size.height, box.size.depth]}
               index={box.index ?? 0}
-              customerId={box.customerId ?? 0}
+              customerId={box.customerId ?? ''}
             />
           ) : null,
         )}

@@ -108,7 +108,7 @@ function Containers() {
   );
 
   const treeData: treeDataType[] = useMemo(() => {
-    const grouped = new Map<string, { key: number; Box: BoxType[] }>();
+    const grouped = new Map<string, { key: string; Box: BoxType[] }>();
     if (typeOfShow == "all") {
       ContainerBox.forEach((_containerBox) => {
         _containerBox.boxes.forEach((box) => {
@@ -116,13 +116,13 @@ function Containers() {
             (_c) => _c.customerID == box?.customerId,
           );
           if (!grouped.has(_customer?.name ?? ""))
-            grouped.set(_customer?.name ?? "", { key: 0, Box: [] });
+            grouped.set(_customer?.name ?? "", { key: '', Box: [] });
 
           const _box = grouped.get(_customer?.name ?? "")?.Box;
           _box?.push(box);
           if (_box)
             grouped.set(_customer?.name ?? "", {
-              key: _customer?.customerID ?? 0,
+              key: _customer?.customerID ?? '',
               Box: _box,
             });
         });
@@ -133,13 +133,13 @@ function Containers() {
           (_c) => _c.customerID == box?.customerId,
         );
         if (!grouped.has(_customer?.name ?? ""))
-          grouped.set(_customer?.name ?? "", { key: 0, Box: [] });
+          grouped.set(_customer?.name ?? "", { key: '', Box: [] });
 
         const _box = grouped.get(_customer?.name ?? "")?.Box;
         _box?.push(box);
         if (_box)
           grouped.set(_customer?.name ?? "", {
-            key: _customer?.customerID ?? 0,
+            key: _customer?.customerID ?? '',
             Box: _box,
           });
       });
@@ -176,12 +176,12 @@ function Containers() {
           if (_Ids[1] && _Ids[0])
             Ids.push({
               _box: Number(_Ids[1] ?? 0),
-              _container: Number(_Ids[0] ?? 0),
+              _container: _Ids[0] ?? '',
             });
         } else {
           ContainerBox.forEach((_con) => {
             _con.boxes.forEach((_box) => {
-              if (_box.customerId == Number(_val)) {
+              if (_box.customerId == _val) {
                 Ids.push({
                   _box: _box.index ?? 0,
                   _container: _box.customerId ?? 0,
@@ -279,7 +279,7 @@ function Containers() {
     }: {
       box_size: "ASC" | "DESC";
       check_weight: boolean;
-      customer: number | number[];
+      customer: string | string[];
     }) => {
       const _Customer = Array.isArray(customer) ? customer : [customer];
       setInitedTree(false);

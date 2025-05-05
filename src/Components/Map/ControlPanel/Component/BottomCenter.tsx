@@ -13,7 +13,7 @@ import { useMapStore } from "@Store/MapStore";
 import { useRouteStore } from "@Store/RouteStore";
 
 export default function BottomCenter() {
-  const { Markers, setMarkers } = useMapStore();
+  const { setFilter } = useMapStore();
   const { HideRoute, setHideRoute } = useRouteStore();
 
   const [filterCustomer, setfilterCustomer] =
@@ -26,29 +26,8 @@ export default function BottomCenter() {
 
   const [DrawLasso, setDrawLasso] = useState("Add");
   useEffect(() => {
-    switch (filterCustomer) {
-      case "Heavy":
-        setMarkers(
-          Markers.map((marker) =>
-            marker.MarkerID === 1 || marker.MarkerID === 3
-              ? { ...marker, IsHide: false }
-              : { ...marker, IsHide: true }
-          )
-        );
-        break;
-      case "Light":
-        setMarkers(
-          Markers.map((marker) =>
-            marker.MarkerID === 2 || marker.MarkerID === 4
-              ? { ...marker, IsHide: false }
-              : { ...marker, IsHide: true }
-          )
-        );
-        break;
-      case "Disable":
-        setMarkers(Markers.map((marker) => ({ ...marker, IsHide: false })));
-        break;
-    }
+    setFilter(filterCustomer)
+ 
   }, [filterCustomer]);
 
   return (

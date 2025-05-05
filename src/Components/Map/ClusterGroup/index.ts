@@ -1,4 +1,4 @@
-import ClusterGroup from "./ClusterGroup";
+import ClusterGroup from "./Component/ClusterGroup";
 export {
     ClusterGroup
 }

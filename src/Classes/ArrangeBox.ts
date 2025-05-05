@@ -119,11 +119,14 @@ private CheckingRotation={
   public GetBoxWithPosition(): BoxType[] {
     this.CheckingPosition = true;
     // calculate position Box
+    // console.log(this.Boxes);
     this.Boxes = this.Boxes.map((box) => {
       this.CurrentBox = box;
       const { position, size } = this.CalculatePosition(box, 0, 0, 0);
+      // console.log({box, position, size });
       return { ...box, size, position };
     });
+    // console.log(this.Boxes);
     this.CheckingPosition = false;
     return this.Boxes;
   }
@@ -295,6 +298,7 @@ private CheckingRotation={
             return this.CalculatePosition(_Box, 0, 0, startDepth + 1);
           else {
             this.LargeBoxes.push(_Box);
+            this.ExtraBoxes.push(_Box);
             return {
               size: this.CurrentBox?.size ?? _Box.size,
               position: { x: 0.2, y: 0.2, z: 0.2 },

@@ -24,31 +24,33 @@ export default function MarkerPopup({ marker }: PopupType) {
           </div>
         ))}
 
-        {marker?.Products?.map((good, index) => (
-          <div
-            key={`Products${index}`}
-            className="popup-row mt-2 popup-row-custom">
-            <span
-              className="popup-label pupup-lable-custom"
-              style={{ color: good.ServiceTypeID === 2 ? "green" : "" }}>
-              <span className="superscript-text">{good.Quantity}</span>
-              <span>{good.ProductTitle}</span>
-            </span>
-            <div className="popup-row-icon-container">
-              {good.ServiceTypeID === 2 ? (
-                <i
-                  className="fi fi-rr-plug-connection block"
-                  style={{ color: "green" }}
-                />
-              ) : (
-                <i
-                  className="fi fi-rr-truck-side hidden"
-                  style={{ color: "green" }}
-                />
-              )}
+        {marker?.Order?.map((order, indx) =>
+          order?.Products?.map((good, index) => (
+            <div
+              key={`Products${index}`}
+              className="popup-row mt-2 popup-row-custom">
+              <span
+                className="popup-label pupup-lable-custom"
+                style={{ color: good.ServiceTypeID === 2 ? "green" : "" }}>
+                <span className="superscript-text">{good.Quantity}</span>
+                <span>{good.ProductTitle}</span>
+              </span>
+              <div className="popup-row-icon-container">
+                {good.ServiceTypeID === 2 ? (
+                  <i
+                    className="fi fi-rr-plug-connection block"
+                    style={{ color: "green" }}
+                  />
+                ) : (
+                  <i
+                    className="fi fi-rr-truck-side hidden"
+                    style={{ color: "green" }}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </>
   );

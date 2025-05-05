@@ -1,8 +1,10 @@
-import { Marker, RouteCoordinate } from "@Map/Type";
+import {  RouteCoordinate } from "@Map/Type";
 import { BoxType, ContainerType } from "@Container/Type";
 
-import { LatLngLiteral } from "leaflet";
+import { LatLngLiteral, LatLngTuple } from "leaflet";
 import { DriverPanelType } from "@Map/Driver";
+import { MarkerEntity } from "@/Components/Type";
+type Filter = "Disable" | "Heavy" | "Light";
 export interface NewContainerType {
   containerID: number;
   name: string;
@@ -16,7 +18,7 @@ export interface ContainerBoxesType {
 }
 
 export interface ShowBoxesType {
-  _container: number;
+  _container: string;
   _box: number;
 }
 export interface ContainerStoreType {
@@ -48,14 +50,17 @@ export interface BoxStoreType {
 }
 
 export interface MapStoreType {
-  Markers: Marker[];
-  setMarkers: (_Markers: Marker[]) => void;
+  Markers: MarkerEntity[];
+  setMarkers: (_Markers: MarkerEntity[]) => void;
 
-  ShopsMarker:Marker[],
-  setShopsMarker :(_ShopsMarker:Marker[])=> void;
+  ShopsMarker: MarkerEntity[];
+  setShopsMarker: (_ShopsMarker: MarkerEntity[]) => void;
 
   Flying: LatLngLiteral | null;
   setFlying: (_LatLng: LatLngLiteral | null) => void;
+
+  Filter: Filter;
+  setFilter: (_Filter: Filter) => void;
 }
 
 export interface RouteStoreType {
@@ -76,6 +81,24 @@ export interface RouteStoreType {
 }
 
 export interface DriversStoreType {
-    Drivers: DriverPanelType[];
-     setDrivers: (_Drivers:DriverPanelType[]) => void;
+  Drivers: DriverPanelType[];
+  setDrivers: (_Drivers: DriverPanelType[]) => void;
+}
+
+export interface GroupType {
+  Index:number;
+  Position?: LatLngTuple;
+  Markers: MarkerEntity[];
+}
+export interface GroupMarkerType {
+  GroupMarker: GroupType[];
+  setGroupMarker: (_GroupMarker: GroupType[]) => void;
+  AddMarkerToGroup: (NewGroupIndex: number, marker: MarkerEntity) => GroupType;
+
+  CurrentGroup?: GroupType;
+  setCurrentGroup: (_Group: GroupType, Filter?: Filter) => void;
+  showCurrentGroupMarker: (MarkerID: number[]) => void;
+
+  CurrentGroupIndex: number;
+  setCurrentGroupIndex: (_CurrentGroupIndex: number) => void;
 }

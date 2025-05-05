@@ -46,11 +46,11 @@ export interface BoxType {
     DepthToHeight?: boolean;
     DepthToWidth?: boolean;
   };
-  customerId?: number;
+  customerId?: string;
   orderId?: number;
 }
 interface CustomerType {
-  customerID: number;
+  customerID: string;
   name: string;
   address: string;
   isVIP: boolean;

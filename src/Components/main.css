@@ -135,31 +135,31 @@ table {
 	font-family: BonyadeKoodak;
 	font-style: normal;
 	font-weight: normal;
-	src: url('../public/font/BonyadeKoodak-Regular.woff') format('woff');	 
+	src: url('/font/BonyadeKoodak-Regular.woff') format('woff');	 
 }
 
 @font-face {
 	font-family: BonyadeKoodak;
 	font-style: normal;
 	font-weight: 500;
-	src: url('../public/font/BonyadeKoodak-Medium.woff') format('woff');		 
+	src: url('/font/BonyadeKoodak-Medium.woff') format('woff');		 
 }
 
 @font-face {
 	font-family: BonyadeKoodak;
 	font-style: normal;
 	font-weight: bold;
-	src: url('../public/font/BonyadeKoodak-Bold.woff') format('woff'); 
+	src: url('/font/BonyadeKoodak-Bold.woff') format('woff'); 
 }
 
 @font-face {
   font-family: IranYekan;
   font-weight: normal;
   font-style: normal;
-  src: url("../public/font/Yekan.eot");
-  src: url("../public/font/Yekan.eot?#iefix") format("embedded-opentype"),
-    url("../public/font/Yekan.woff") format("woff"),
-    url("../public/font/Yekan.ttf") format("truetype");
+  src: url("/font/Yekan.eot");
+  src: url("/font/Yekan.eot?#iefix") format("embedded-opentype"),
+    url("/font/Yekan.woff") format("woff"),
+    url("/font/Yekan.ttf") format("truetype");
   font-display: swap;
 }
 
@@ -244,4 +244,8 @@ input:focus + .switch-slider {
 
 input:checked + .switch-slider:before {
   transform: translateX(26px);
+}
+
+.ant-modal-body{
+  height: 70vh;
 }

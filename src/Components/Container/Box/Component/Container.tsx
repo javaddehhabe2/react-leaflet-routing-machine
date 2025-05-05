@@ -83,5 +83,5 @@ const Container = ({ typeOfShow, containerNumber }: ContainerPropType) => {
     </Canvas>
   );
 };
-Container.whyDidYouRender = true;
+
 export default memo(Container);

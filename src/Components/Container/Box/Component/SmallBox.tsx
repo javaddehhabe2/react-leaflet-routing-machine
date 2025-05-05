@@ -18,6 +18,7 @@ const SmallBox = ({
     const findID = showBoxes.find(
       (_id) => _id._box == index && _id._container == customerId,
     );
+    console.log(findID);
     return findID ? true : false;
   }, [showBoxes, customerId, index]);
 
@@ -26,8 +27,15 @@ const SmallBox = ({
     setFontSize(minSize * 0.3); // Scale font size (adjust as needed)
   }, [size]);
 
+
+  useEffect(() => {
+console.log(showBoxes);
+  }, [showBoxes]);
+  useEffect(() => {
+    console.log(visible);
+      }, [visible]);
   return (
-    <mesh position={position} visible={visible}>
+    <mesh position={position} visible={true}>
       <boxGeometry args={size} />
       <meshStandardMaterial
         color={color}

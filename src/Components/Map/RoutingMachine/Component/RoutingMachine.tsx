@@ -15,7 +15,7 @@ import { useRouteStore } from "@Store/RouteStore";
 function RoutingMachine({
   _index,
   _routeColor,
-  waypoints,
+  waypoints, setContextMenu
 }: RoutingMachineType) {
   const map = useMap();
   const routingRef = useRef<any>(null);
@@ -71,10 +71,41 @@ function RoutingMachine({
               { color: "white", opacity: 1, weight: 1, dashArray: "5, 5" },
             ],
           });
-          line.on("click", function (e: any) {
-            RouteClicked(_index);
+
+          line.once("add", function () {
+            Object.values((line as any)._layers).forEach((layer: any) => {
+              layer.on("click", (e: any) => {
+                console.log(e);
+                RouteClicked(_index);
+              });
+              layer.on("contextmenu", (e: any) => {
+                const { clientX, clientY } = e.originalEvent;
+                console.log(e);
+                setContextMenu({
+                  x: clientX,
+                  y: clientY,
+                  visible: true,
+                  Index: _index,
+                });
+              });
+            });
           });
 
+        //   line.on("click", function (e: any) {
+        //     console.log(e);
+        //     RouteClicked(_index);
+        //   });
+        //   line.on("contextmenu", function (e: any) {
+        //     // e.originalEvent contains the DOM mouse event
+        //     const { clientX, clientY } = e.originalEvent;
+        // console.log(e);
+        //     setContextMenu({
+        //       x: clientX,
+        //       y: clientY,
+        //       visible: true,
+        //       Index: _index, // optional if you want to pass this info
+        //     });
+        //   });
           return line;
         },
         createMarker: () => null,

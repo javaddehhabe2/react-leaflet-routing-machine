@@ -5,7 +5,7 @@ export interface SmallBoxType {
   position: BoxPositionType;
   color: string;
   size: BoxSizeType;
-  customerId: number;
+  customerId: string;
   index: number;
 }
 export interface MainBoxType {

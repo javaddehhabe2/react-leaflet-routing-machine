@@ -184,6 +184,7 @@ export const useContainerStore = create<ContainerStoreType>((set, get) => {
 
       ArrangeBoxClass.GenerateMatrix3D();
       const tmpBox: BoxType[] = ArrangeBoxClass.GetBoxWithPosition();
+   
       // 0.1 =>if box not fit in container
       // 0.2 => if box larger than container
       BoxesIntoContainer.push({
@@ -192,6 +193,7 @@ export const useContainerStore = create<ContainerStoreType>((set, get) => {
           (_box) => ![0.1, 0.2].includes(_box.position?.x ?? 0),
         ),
       });
+      console.log(BoxesIntoContainer,ArrangeBoxClass.LargeBoxes);
       LargeBox.push(...ArrangeBoxClass.LargeBoxes);
       if (ArrangeBoxClass.ExtraBoxes.length > 0)
         return fitBoxesIntoContainer(
@@ -247,9 +249,11 @@ export const useContainerStore = create<ContainerStoreType>((set, get) => {
       const _Boxes = get().boxes;
       const _DefaultContainer = get().defaultContainer;
       const _AllContainers = get().allContainers;
+   
       set(() => ({ ContainerBox: [] }));
       BoxesIntoContainer.length = 0;
       LargeBox.length = 0;
+ 
       fitBoxesIntoContainer(_AllContainers, _Boxes, _DefaultContainer);
 
       BoxesIntoContainer.forEach((_container) => {

@@ -12,24 +12,84 @@ import "leaflet/dist/leaflet.css";
 import { type LatLngExpression } from "leaflet";
 import { MapContainer, TileLayer } from "react-leaflet";
 import Control from "react-leaflet-custom-control";
-import { MarkersDetail } from "@/Data/Map";
+import { MarkersDetail, Setting } from "@/Data/Map";
 
 import Header from "./Header/Header";
-
+import {ContextMenu, ContextMenuStateType} from "@Map/ContextMenu";
 import { Storage } from "@LocalStorage/Storage";
 import { useMapStore } from "@Store/MapStore";
 import { useRouteStore } from "@Store/RouteStore";
-import { Marker, RouteCoordinate, RouteDetailsLS } from "./Type";
+import {  RouteCoordinate, RouteDetailsLS } from "./Type";
 import { BottomLeft, BottomCenter } from "@Map/ControlPanel";
 import { Stack } from "@mui/material";
 import { RouteDetails } from "./RouteDetails";
 import { RoutingMachine } from "./RoutingMachine";
 import { ClusterGroup } from "./ClusterGroup";
+import { useGroupMarkerStore } from "@Store/GroupMarkerStore";
+import { GroupMarkerType, GroupType } from "@Store/Type";
+import { GetNearDistance } from "@Utility/Map";
+import { MarkerEntity } from "../Type";
+import { useContainerStore } from "@Store/ContainerStore";
+import { ContainerData } from "@/Data/Box";
+import { Menu, type MenuProps,Modal ,Flex, Button } from "antd";
+import { FaMapSigns, FaTruckPickup } from "react-icons/fa";
+import { Container } from "@Container/Box";
 // const Leaflet = require("leaflet");
 
+type MenuItem = Required<MenuProps>["items"][number];
+
 function App() {
-  const { setMarkers, setShopsMarker } = useMapStore();
+    const [contextMenu, setContextMenu] = useState<ContextMenuStateType>({ visible: false, x: 0, y: 0, Index: 0 });
+    const [openResponsive, setOpenResponsive] = useState(false);
+  const { setMarkers, setShopsMarker, Markers } = useMapStore();
   const { Coordinates, setCoordinates } = useRouteStore();
+  const [selectedContainer, setSelectedContainer] = useState<number>();
+const {
+
+    SetAllContainers,
+  } = useContainerStore();
+  const { setGroupMarker } = useGroupMarkerStore();
+
+  const groupMarkersByDistance = useCallback(() => {
+    const groups: GroupType[] = [];
+
+    Markers.forEach((marker) => {
+      let added = false;
+      for (const group of groups) {
+        for (const member of group.Markers) {
+          const distance = GetNearDistance(
+            marker.Latitude,
+            marker.Longitude,
+            member.Latitude,
+            member.Longitude
+          );
+          if (distance < Setting.Threshold) {
+            group.Markers.push(marker);
+            added = true;
+            break;
+          }
+        }
+        if (added) break;
+      }
+      if (!added) {
+        groups.push({ Index: groups.length + 1, Markers: [marker] });
+      }
+    });
+
+    return groups;
+  }, [Markers]);
+  const items: MenuItem[] = useMemo( () =>([
+    {
+      key: "ShowContainer",
+      label: "Show Container",
+      icon: <FaTruckPickup />,
+    },
+    {
+      key: "Clear Route",
+      label: "Clear Route",
+      icon: <FaMapSigns />,
+    },
+  ]),[]);
   const DefaultPosition: LatLngExpression = useMemo(() => {
     return MarkersDetail.length > 0
       ? [MarkersDetail[0].Latitude, MarkersDetail[0].Longitude]
@@ -53,14 +113,14 @@ function App() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   Storage.setLocal("LS_Route_Detail", JSON.stringify({ currentRouteIndex }));
-  // }, [currentRouteIndex]);
+  useEffect(() => {
+    setGroupMarker(groupMarkersByDistance());
+  }, [Markers, setGroupMarker, groupMarkersByDistance]);
 
   useEffect(() => {
-    setMarkers(MarkersDetail);
+    setMarkers(MarkersDetail.map((_marker) => ({ ..._marker, IsHide: true })));
 
-    const _Shops: Marker[] = [];
+    const _Shops: MarkerEntity[] = [];
 
     let index = 1;
     MarkersDetail.forEach((marker) => {
@@ -75,6 +135,9 @@ function App() {
             Latitude: _m.Latitude,
             Longitude: _m.Longitude,
             MarkerID: 10,
+            isVIP:false,
+            Order:[]
+
           });
         });
       }
@@ -90,6 +153,29 @@ function App() {
     if (ShopArray) setShopsMarker([...ShopArray]);
   }, [MarkersDetail]);
 
+ useEffect(() => {
+    SetAllContainers(ContainerData.ContainerType);
+  }, [ ContainerData]);
+
+
+   const onClick: MenuProps["onClick"] = useCallback(
+      (e: any) => {
+    
+        if(e.key==="ShowContainer"){
+          setSelectedContainer(contextMenu.Index);
+          setOpenResponsive(true);
+        }
+    console.log(e)
+        
+      },
+      [contextMenu]
+    );
+
+
+  const closeContextMenu = () => {
+    setContextMenu((prev) => ({ ...prev, visible: false }));
+  };
+  
   return (
     // <AppContextProvider initialValue={{ ...contextValue, coordinates }}>
     <>
@@ -110,17 +196,19 @@ function App() {
             url={`http://ows.mundialis.de/services/service?`}
             params={{transparent:true,layers:"TOPO-OSM-WMS"}}
           /> */}
-<ClusterGroup/>
+        <ClusterGroup />
         {Coordinates.map((_route, index) => (
-            <RoutingMachine
+          <RoutingMachine
             key={`coor${index}`}
-              waypoints={_route.Route.map((object) =>
-                [object.Latitude, object.Longitude]
-              )}
-              _routeColor={_route.RouteColor}
-              _index={index}
-            />
-          ))}
+            waypoints={_route.Route.map((object) => [
+              object.Latitude,
+              object.Longitude,
+            ])}
+            _routeColor={_route.RouteColor}
+            _index={index}
+            setContextMenu={setContextMenu}
+          />
+        ))}
 
         <Control
           position="bottomleft"
@@ -138,6 +226,43 @@ function App() {
           </Stack>
         </Control>
       </MapContainer>
+      <ContextMenu
+              x={contextMenu.x}
+              y={contextMenu.y}
+              visible={contextMenu.visible}
+              onClose={closeContextMenu}>
+              <Menu
+                onClick={onClick}
+                style={{ width: 256, direction: "ltr" }}
+                mode="inline"
+                items={items}
+              />
+            </ContextMenu>
+            <Flex vertical gap="middle" align="flex-start">
+      {/* Basic */}
+     
+     
+
+      {/* Responsive */}
+
+      <Modal
+        title="Container"
+        centered
+        open={openResponsive}
+        onCancel={() => setOpenResponsive(false)}
+        footer={
+          <Button type="primary" onClick={() => setOpenResponsive(false)}>
+            Reload
+          </Button>
+        }
+        // style={{height:"80vh"}}
+         className="h-5/6"
+
+         width={1000}
+      >
+      {selectedContainer !==undefined  ? <Container typeOfShow={"one"} containerNumber={selectedContainer??0}/>:null}
+      </Modal>
+    </Flex>
     </>
   );
 }

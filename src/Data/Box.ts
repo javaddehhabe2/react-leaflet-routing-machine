@@ -52,7 +52,7 @@ export const ContainerData: ContainerDataType = {
   crossSection: 90,
   customer: [
     {
-      customerID: 1,
+      customerID: '1',
       name: "Javad",
       address: "neyshabour",
       isVIP: true,
@@ -115,7 +115,7 @@ export const ContainerData: ContainerDataType = {
       ],
     },
     {
-      customerID: 3,
+      customerID: '3',
       name: "reza",
       address: "neyshabour",
       isVIP: true,
@@ -148,7 +148,7 @@ export const ContainerData: ContainerDataType = {
       ],
     },
     {
-      customerID: 4,
+      customerID: '4',
       name: "Sina",
       address: "neyshabour",
       isVIP: false,
@@ -206,7 +206,7 @@ export const ContainerData: ContainerDataType = {
       ],
     },
     {
-      customerID: 2,
+      customerID: '2',
       name: "Ali",
       address: "neyshabour",
       isVIP: false,

@@ -1,41 +1,43 @@
-export interface Marker {
-  index:number;
-  IsHide?:boolean;
-  CustomerID: string;
-  CustomerName: string;
-  CustomerAddress: string;
-  Latitude: number;
-  Longitude: number;
-  MarkerID: number;
-  InstallmentEstatment?: number;
-  Products?: (ProductsEntity)[] | null;
-  Shops?: (ShopsEntity)[] | null;
-  Distance?:number;
-}
-export interface ProductsEntity {
-  DossierDetailID: string;
-  ProductTitle: string;
-  ProductCode: string;
-  DossierDetailNumber: string;
-  Quantity: number;
-  EstimationOfDelivery: number;
-  DossierDetailTypeID: number;
-  InPickup: number;
-  ServiceTypeID: number;
-  Volume: number;
-}
-export interface ShopsEntity {
-  ShopCode: string;
-  ShopAddress: string;
-  ShopName: string;
-  Latitude: number;
-  Longitude: number;
-}
+// export interface Marker {
+//   index:number;
+//   IsHide?:boolean;
+//   CustomerID: string;
+//   CustomerName: string;
+//   CustomerAddress: string;
+//   Latitude: number;
+//   Longitude: number;
+//   MarkerID: number;
+//   InstallmentEstatment?: number;
+//   Products?: (ProductsEntity)[] | null;
+//   Shops?: (ShopsEntity)[] | null;
+//   Distance?:number;
+// }
+// export interface ProductsEntity {
+//   DossierDetailID: string;
+//   ProductTitle: string;
+//   ProductCode: string;
+//   DossierDetailNumber: string;
+//   Quantity: number;
+//   EstimationOfDelivery: number;
+//   DossierDetailTypeID: number;
+//   InPickup: number;
+//   ServiceTypeID: number;
+//   Volume: number;
+// }
+// export interface ShopsEntity {
+//   ShopCode: string;
+//   ShopAddress: string;
+//   ShopName: string;
+//   Latitude: number;
+//   Longitude: number;
+// }
+
+import { MarkerEntity } from "../Type";
 
 export type LassoController = "Disable" | "Add" | "Remove";
 
 export interface RouteCoordinate {
-  Route: Marker[];
+  Route: MarkerEntity[];
   RouteColor:string;
 }
 export interface RoutingType {
@@ -43,7 +45,7 @@ export interface RoutingType {
   ondblclickMarker: (lat: number, lng: number) => void;
   removedMarker: number | undefined;
   setRemovedMarker: React.Dispatch<React.SetStateAction<number | undefined>>;
-  DrawIcon: (_marker: Marker, RouteColor: string, indx: number) => JSX.Element;
+  DrawIcon: (_marker: MarkerEntity, RouteColor: string, indx: number) => JSX.Element;
   drawLasso: LassoController;
   setDrawLasso: React.Dispatch<React.SetStateAction<LassoController>>;
   _routeColor:string;
@@ -52,12 +54,13 @@ export interface RoutingType {
 }
 
 export interface RouteDetailsType {
-  Point?: Marker[] | null;
+  Point?: MarkerEntity[] | null;
 }
 export interface RouteDetailsLS {
   currentRouteIndex?: number;
 }
 export interface SettingsType {
+  Threshold:number;
   TimeDistance: number;
   FixedWorkingHours: number;
   IsHeavy?: boolean;
