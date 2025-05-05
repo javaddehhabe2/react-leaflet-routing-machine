@@ -1,9 +1,8 @@
-import { memo, useEffect, useMemo } from "react";
+import { memo } from "react";
 import { Marker, Popup } from "react-leaflet";
 import { MarkerPopup } from "@Map/Popup";
 import { CustomMarkerType } from "../Type";
-import CreateReactDivIcon from "./ReactDivIcon";
-
+import { useLeafletDivIcon } from "./useLeafletDivIcon";
 function CustomMarker({
   Index,
   MarkerID,
@@ -16,27 +15,23 @@ function CustomMarker({
   MarkerDetail,
   Hide,
 }: CustomMarkerType) {
-  const Icon = useMemo(() => {
-    
-    return CreateReactDivIcon({
-      MarkerID,
-      Text,
-      Latitude,
-      Longitude,
-      Index,
-      Hide
-    });
-  }, [MarkerID, Text, Latitude, Longitude, Index,Hide]);
-// useEffect(()=>{
-//   console.log(Text);
-// },[Text])
+
+  const icon = useLeafletDivIcon({
+    Index,
+    MarkerID,
+    Latitude,
+    Longitude,
+    Text,
+    Hide,
+  });
+  if (!icon) return null; // Don’t render until icon is ready
   return (
     <Marker
       position={[Latitude, Longitude]}
       draggable={Draggable}
       bubblingMouseEvents={BubblingMouseEvents}
       eventHandlers={EventHandlers}
-      icon={Icon}>
+      icon={icon}>
       {MarkerDetail ? (
         <Popup closeButton={false} minWidth={281}>
           <MarkerPopup marker={MarkerDetail} />

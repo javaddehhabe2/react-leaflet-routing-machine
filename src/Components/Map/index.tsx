@@ -164,6 +164,7 @@ const {
         if(e.key==="ShowContainer"){
           setSelectedContainer(contextMenu.Index);
           setOpenResponsive(true);
+          closeContextMenu()
         }
     console.log(e)
         
