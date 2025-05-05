@@ -67,6 +67,17 @@ export interface RouteStoreType {
   HideRoute: boolean;
   setHideRoute: (_HideRoute: boolean) => void;
 
+  Routes:{
+    Index:number;
+    Coordinates: RouteCoordinate[];
+  }[];
+  setRoutes: (
+    Index:number,
+    _Coordinates: RouteCoordinate[],
+    SaveToLocal?: boolean
+  ) => void;
+
+
   Coordinates: RouteCoordinate[];
   setCoordinates: (
     _Coordinates: RouteCoordinate[],

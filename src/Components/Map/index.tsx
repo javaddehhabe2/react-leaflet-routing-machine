@@ -34,6 +34,7 @@ import { ContainerData } from "@/Data/Box";
 import { Menu, type MenuProps,Modal ,Flex, Button } from "antd";
 import { FaMapSigns, FaTruckPickup } from "react-icons/fa";
 import { Container } from "@Container/Box";
+import { isNull } from "util";
 // const Leaflet = require("leaflet");
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -41,14 +42,17 @@ type MenuItem = Required<MenuProps>["items"][number];
 function App() {
     const [contextMenu, setContextMenu] = useState<ContextMenuStateType>({ visible: false, x: 0, y: 0, Index: 0 });
     const [openResponsive, setOpenResponsive] = useState(false);
+    const [currentRouteGroup, setCurrentRouteGroup] = useState<RouteCoordinate[]>([]);
+
+    
   const { setMarkers, setShopsMarker, Markers } = useMapStore();
-  const { Coordinates, setCoordinates } = useRouteStore();
+  const { Coordinates, setCoordinates,Routes } = useRouteStore();
   const [selectedContainer, setSelectedContainer] = useState<number>();
 const {
 
     SetAllContainers,
   } = useContainerStore();
-  const { setGroupMarker } = useGroupMarkerStore();
+  const {CurrentGroupIndex, setGroupMarker } = useGroupMarkerStore();
 
   const groupMarkersByDistance = useCallback(() => {
     const groups: GroupType[] = [];
@@ -158,12 +162,24 @@ const {
   }, [ ContainerData]);
 
 
+  useEffect(() => {
+   const CurrentRoute= Routes.find((_route)=>_route.Index===CurrentGroupIndex)
+    if(CurrentRoute)setCurrentRouteGroup(CurrentRoute.Coordinates)
+      else setCurrentRouteGroup([])
+
+  }, [ CurrentGroupIndex]);
+  useEffect(() => {
+  
+    console.log(currentRouteGroup);
+  }, [ currentRouteGroup]);
+  
    const onClick: MenuProps["onClick"] = useCallback(
       (e: any) => {
     
         if(e.key==="ShowContainer"){
           setSelectedContainer(contextMenu.Index);
           setOpenResponsive(true);
+          closeContextMenu()
         }
     console.log(e)
         
@@ -197,7 +213,7 @@ const {
             params={{transparent:true,layers:"TOPO-OSM-WMS"}}
           /> */}
         <ClusterGroup />
-        {Coordinates.map((_route, index) => (
+        {currentRouteGroup.map((_route, index) => (
           <RoutingMachine
             key={`coor${index}`}
             waypoints={_route.Route.map((object) => [
@@ -252,7 +268,7 @@ const {
         onCancel={() => setOpenResponsive(false)}
         footer={
           <Button type="primary" onClick={() => setOpenResponsive(false)}>
-            Reload
+            close
           </Button>
         }
         // style={{height:"80vh"}}

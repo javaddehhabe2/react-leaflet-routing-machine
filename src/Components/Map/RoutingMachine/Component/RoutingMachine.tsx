@@ -1,16 +1,10 @@
 import { useCallback, useEffect, useState, useRef, memo } from "react";
 import "leaflet-routing-machine-custom";
 import "leaflet-routing-machine";
-// import { type LassoControl } from "leaflet-lasso";
 import { useMap } from "react-leaflet";
-// import { RouteColor,Color, DefaultColor } from "../MapData";
-
-// import { Marker } from "../MarkerType";
-// import { useAppContext } from "../context/AppContext";
 import { RoutingMachineType } from "../type";
 import L from "leaflet";
 import { useRouteStore } from "@Store/RouteStore";
-// const Leaflet = require("leaflet");
 
 function RoutingMachine({
   _index,
@@ -20,7 +14,7 @@ function RoutingMachine({
   const map = useMap();
   const routingRef = useRef<any>(null);
   const { setSelectedRoute, setShowDriver, Coordinates } = useRouteStore();
-  // console.log({Coordinates});
+
   useEffect(() => {
     if (!map) return;
 
@@ -31,14 +25,6 @@ function RoutingMachine({
         .filter((w: any) => w && w.latLng)   // 🛡️ PROTECTION
         .map((w: any) => [w.latLng.lat, w.latLng.lng])
     ) !== JSON.stringify(waypoints);
-
-    // const hasChanged =
-    //   JSON.stringify(
-    //     currentWaypoints?.map((w: any) => [w.latLng.lat, w.latLng.lng])
-    //   ) !== JSON.stringify(waypoints);
-
-    // setCoordinates([])
-    // const tmp_item = [...routes];
     if (!routingRef.current) {
       routingRef.current = L.Routing.control({
         waypoints: waypoints,
@@ -116,18 +102,17 @@ function RoutingMachine({
         waypoints.map(([lat, lng]) => L.latLng(lat, lng))
       );
     }
-    // return () =>{
-    //   if(map) map.removeControl(routingControl);
-    // }
-    // tmp_item.push(item);
-    // setRoutes(tmp_item);
-    // });
+return ()=>{
+  if (map &&  routingRef.current){
 
-    // console.log({ waypoints, map, _routeColor });
+      map.removeControl(routingRef.current);
+      routingRef.current.remove();
+      routingRef.current = null;
+    
+  } 
+
+}
   }, [waypoints, _routeColor]);
-  // useEffect(() => {
-  //   console.log({Coordinates});
-  // }, [Coordinates]);
   const RouteClicked = useCallback(
     (index: number) => {
       // setFlying(undefined);

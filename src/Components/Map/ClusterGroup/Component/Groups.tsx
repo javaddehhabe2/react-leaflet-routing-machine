@@ -38,7 +38,7 @@ function Groups() {
   } = useContainerStore();
 
   const { Filter,Markers } = useMapStore();
-const {setCoordinates,Coordinates}=useRouteStore();
+const {setCoordinates,setRoutes,Coordinates}=useRouteStore();
   const {
     GroupMarker,
     CurrentGroup,
@@ -128,8 +128,9 @@ const {setCoordinates,Coordinates}=useRouteStore();
       const _selectedGroupMarker = GroupMarker.find(
         (_GroupMarker) => _GroupMarker.Index === contextMenu.Index
       );
-
+// console.log({GroupMarker,_selectedGroupMarker})
       if (_selectedGroupMarker) {
+        closeContextMenu();
         let customerBox: BoxType[] = [];
         _selectedGroupMarker.Markers.forEach((_markers) => {
           _markers?.Order.forEach((_order) => {
@@ -150,13 +151,15 @@ const {setCoordinates,Coordinates}=useRouteStore();
           });
         });
         customerBox = [...SortBox(customerBox, "ASC", false)];
-console.log(customerBox);
         SetBoxes(customerBox.map((_box, index) => ({ ..._box, index })));
 
         ReArrange();
+
+        setCurrentGroupIndex(_selectedGroupMarker.Index)
+        setCurrentGroup(_selectedGroupMarker);
       }
     },
-    [contextMenu, GroupMarker]
+    [contextMenu, GroupMarker,closeContextMenu]
   );
 
   useEffect(() => {
@@ -177,7 +180,7 @@ console.log(customerBox);
 
 
   useEffect(() => {
-    console.log({ContainerBox});
+  
     if(ContainerBox){
       const _Routes:RouteCoordinate[]=[];
       ContainerBox.forEach((_container,index)=>{
@@ -193,23 +196,16 @@ console.log(customerBox);
         _Routes.push(_Route);
       })
       setCoordinates(_Routes,false);
+      // console.log(CurrentGroupIndex,_Routes);
+      setRoutes(CurrentGroupIndex,_Routes,false)
     }
   }, [ContainerBox]);
 
-  useEffect(() => {
-    console.log({Coordinates});
-   
-  }, [Coordinates]);
-
-  useEffect(() => {
-    console.log({CurrentGroup});
-   
-  }, [CurrentGroup]);
-
+ 
   return (
     <>
       {polygonPositions.length > 3 ? (
-        <Polygon positions={polygonPositions} pathOptions={{ color: "blue" }} />
+        <Polygon interactive={false} positions={polygonPositions} pathOptions={{ color: "blue" }} />
       ) : null}
       {GroupMarker.map((group, index) => (
         <CustomMarker

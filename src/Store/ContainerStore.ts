@@ -193,7 +193,6 @@ export const useContainerStore = create<ContainerStoreType>((set, get) => {
           (_box) => ![0.1, 0.2].includes(_box.position?.x ?? 0),
         ),
       });
-      console.log(BoxesIntoContainer,ArrangeBoxClass.LargeBoxes);
       LargeBox.push(...ArrangeBoxClass.LargeBoxes);
       if (ArrangeBoxClass.ExtraBoxes.length > 0)
         return fitBoxesIntoContainer(
