@@ -3,6 +3,9 @@ import * as L from 'leaflet';
 declare module 'leaflet' {
   namespace Routing {
     class Control extends L.Control {
+      on(arg0: string, arg1: (e: any) => void) {
+        throw new Error("Method not implemented.");
+      }
       constructor(options?: any);
       getPlan(): any;
       setWaypoints(waypoints: L.LatLng[]): void;

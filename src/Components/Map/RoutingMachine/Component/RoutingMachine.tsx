@@ -95,21 +95,26 @@ function RoutingMachine({
           return line;
         },
         createMarker: () => null,
+      }).on("routingerror", function(e:any) {
+        console.error("Routing error:", e.error);
       }).addTo(map);
-    } else if (hasChanged) {
+    } else if (hasChanged && routingRef.current && routingRef.current.setWaypoints){
       // Only update waypoints, don't recreate control
       routingRef.current.setWaypoints(
         waypoints.map(([lat, lng]) => L.latLng(lat, lng))
       );
     }
 return ()=>{
-  if (map &&  routingRef.current){
-
+  if (routingRef.current) {
+    try {
       map.removeControl(routingRef.current);
-      routingRef.current.remove();
+      routingRef.current.remove(); // this may internally call `_clearLines`
+    } catch (error) {
+      console.error("Failed to remove routing control:", error);
+    } finally {
       routingRef.current = null;
-    
-  } 
+    }
+  }
 
 }
   }, [waypoints, _routeColor]);
